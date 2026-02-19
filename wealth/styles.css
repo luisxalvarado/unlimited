@@ -1,0 +1,437 @@
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@300;400;500&family=Instrument+Serif:ital@0;1&display=swap');
+
+:root {
+  --bg: #05050a;
+  --s1: #0a0a12;
+  --s2: #0f0f18;
+  --border: #18182a;
+  --border2: #22223a;
+  --g: #00e5a0;
+  --g2: #00e5a018;
+  --g3: #00e5a040;
+  --y: #f0c040;
+  --r: #ff3d5a;
+  --b: #3d8aff;
+  --o: #ff7a3d;
+  --text: #c8c8e0;
+  --muted: #42425a;
+  --white: #ededf8;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'DM Mono', monospace;
+  font-size: 13px;
+  line-height: 1.5;
+  min-height: 100vh;
+}
+
+/* ATMOSPHERE */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 100% 50% at 80% -10%, #00e5a009 0%, transparent 55%),
+    radial-gradient(ellipse 70% 40% at -10% 80%, #3d8aff07 0%, transparent 55%),
+    radial-gradient(ellipse 60% 30% at 50% 110%, #ff3d5a06 0%, transparent 60%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.grain {
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.5;
+}
+
+.app {
+  position: relative;
+  z-index: 1;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 28px 24px;
+}
+
+/* FONTS */
+.font-bebas { font-family: 'Bebas Neue', sans-serif; }
+.font-mono { font-family: 'DM Mono', monospace; }
+.font-serif { font-family: 'Instrument Serif', serif; }
+
+/* HEADER */
+.header {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: end;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 24px;
+}
+.header-left {}
+.header-right { text-align: right; }
+.header-label {
+  font-size: 9px;
+  letter-spacing: 0.4em;
+  color: var(--g);
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+.header h1 {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 58px;
+  letter-spacing: 0.03em;
+  color: var(--white);
+  line-height: 1;
+  font-weight: 400;
+}
+.header h1 span { color: var(--g); }
+.header-date {
+  font-size: 9px;
+  color: var(--muted);
+  letter-spacing: 0.12em;
+  margin-bottom: 6px;
+}
+
+/* STATUS ROW */
+.status-row {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 2px;
+  margin-bottom: 2px;
+}
+
+/* GRID LAYOUTS */
+.grid-wide {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 2px;
+  margin-bottom: 2px;
+}
+
+/* STAT CARD */
+.stat {
+  background: var(--s1);
+  border: 1px solid var(--border);
+  padding: 20px 18px;
+  position: relative;
+  overflow: hidden;
+  animation: riseUp 0.5s ease both;
+}
+.stat::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--ac, var(--g));
+  opacity: 0.7;
+}
+.stat-label {
+  font-size: 8px;
+  letter-spacing: 0.3em;
+  color: var(--muted);
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+.stat-value {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 44px;
+  color: var(--white);
+  line-height: 1;
+  margin-bottom: 2px;
+}
+.stat-unit {
+  font-size: 9px;
+  color: var(--muted);
+  letter-spacing: 0.1em;
+}
+.stat-context {
+  font-size: 10px;
+  margin-top: 6px;
+  letter-spacing: 0.04em;
+}
+
+/* PANEL */
+.panel {
+  background: var(--s1);
+  border: 1px solid var(--border);
+  padding: 24px;
+  border-radius: 3px;
+  animation: riseUp 0.55s ease both;
+}
+.panel-hdr {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+.panel-title {
+  font-size: 8px;
+  letter-spacing: 0.35em;
+  color: var(--g);
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.panel-title::after {
+  content: '';
+  display: block;
+  width: 24px;
+  height: 1px;
+  background: var(--border2);
+}
+.panel-badge {
+  font-size: 8px;
+  letter-spacing: 0.15em;
+  padding: 3px 8px;
+  border-radius: 2px;
+  background: var(--g2);
+  border: 1px solid var(--g3);
+  color: var(--g);
+}
+
+/* ANIMATION */
+@keyframes riseUp {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.stat:nth-child(1) { animation-delay: 0.04s; }
+.stat:nth-child(2) { animation-delay: 0.08s; }
+.stat:nth-child(3) { animation-delay: 0.12s; }
+.stat:nth-child(4) { animation-delay: 0.16s; }
+.stat:nth-child(5) { animation-delay: 0.20s; }
+
+/* PROGRESS BAR */
+.prog {
+  height: 3px;
+  background: var(--border);
+  border-radius: 2px;
+  overflow: hidden;
+}
+.prog-fill {
+  height: 100%;
+  border-radius: 2px;
+  transition: width 1s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* INCOME TABLE */
+.income-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.income-table th {
+  font-size: 8px;
+  letter-spacing: 0.25em;
+  color: var(--muted);
+  text-align: left;
+  padding: 8px 6px;
+  border-bottom: 1px solid var(--border);
+  font-weight: 400;
+  text-transform: uppercase;
+}
+.income-table th.right { text-align: right; }
+.income-table td {
+  padding: 10px 6px;
+  font-size: 11px;
+  color: var(--text);
+}
+.income-table td.right { text-align: right; }
+.income-table tr { border-bottom: 1px solid var(--border); }
+
+/* PROSPERITY */
+.prosperity-big {
+  text-align: center;
+  margin-bottom: 24px;
+}
+.prosperity-big .value {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 52px;
+  line-height: 1;
+}
+.prosperity-big .sub {
+  font-size: 9px;
+  color: var(--muted);
+  letter-spacing: 0.15em;
+  margin-top: 4px;
+}
+.prosperity-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+.prosperity-row .label {
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  color: var(--muted);
+  text-transform: uppercase;
+}
+.prosperity-row .val {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 20px;
+  line-height: 1;
+}
+.prosperity-formula {
+  margin-top: 16px;
+  padding: 10px 12px;
+  background: var(--s2);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  font-size: 9px;
+  color: var(--muted);
+  line-height: 1.7;
+  letter-spacing: 0.04em;
+}
+.prosperity-formula .formula-text {
+  font-family: 'Instrument Serif', serif;
+  font-style: italic;
+  color: var(--text);
+}
+
+/* WEALTH COACH */
+.coach-section { margin-bottom: 14px; }
+.coach-section:last-child { margin-bottom: 0; }
+.coach-label {
+  font-size: 8px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+.coach-text {
+  font-family: 'Instrument Serif', serif;
+  font-size: 12px;
+  line-height: 1.6;
+  color: var(--text);
+  font-style: italic;
+}
+
+/* ASSET LIBRARY */
+.asset-bar { margin-bottom: 8px; }
+.asset-bar-header {
+  display: flex;
+  justify-content: space-between;
+  font-size: 10px;
+  margin-bottom: 4px;
+}
+.asset-debt-note {
+  font-size: 8px;
+  color: var(--muted);
+  margin-top: 2px;
+}
+.asset-totals {
+  display: flex;
+  justify-content: space-between;
+  padding-top: 12px;
+  border-top: 1px solid var(--border2);
+  font-size: 10px;
+  margin-bottom: 16px;
+}
+.asset-totals .label {
+  color: var(--muted);
+  letter-spacing: 0.15em;
+}
+.asset-totals .value {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 22px;
+  color: var(--white);
+}
+.low-rated-header {
+  font-size: 8px;
+  letter-spacing: 0.2em;
+  color: var(--y);
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+.low-rated-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 6px 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 10px;
+}
+.debt-tip {
+  padding: 10px 12px;
+  background: var(--s2);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  font-size: 10px;
+  color: var(--text);
+  line-height: 1.6;
+}
+.debt-tip-label {
+  color: var(--y);
+  font-size: 8px;
+  letter-spacing: 0.15em;
+}
+
+/* SELLING PRIORITY */
+.sell-item { margin-bottom: 8px; }
+.sell-item-header {
+  display: flex;
+  justify-content: space-between;
+  font-size: 10px;
+  margin-bottom: 3px;
+}
+.sell-debt-tag {
+  font-size: 8px;
+  color: var(--r);
+  margin-left: 6px;
+  letter-spacing: 0.1em;
+}
+.sell-legend {
+  display: flex;
+  gap: 16px;
+  margin-top: 16px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border2);
+  font-size: 8px;
+  letter-spacing: 0.15em;
+  color: var(--muted);
+}
+.sell-legend-dot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  margin-right: 4px;
+}
+
+/* INCOME TOTALS ROW */
+.income-totals {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 16px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border2);
+  font-size: 10px;
+  letter-spacing: 0.05em;
+}
+
+/* CHART CANVAS */
+.chart-wrap {
+  position: relative;
+  width: 100%;
+  height: 260px;
+}
+.chart-wrap canvas {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+/* RESPONSIVE */
+@media (max-width: 1100px) {
+  .status-row { grid-template-columns: repeat(3, 1fr); }
+  .grid-wide { grid-template-columns: 1fr; }
+}
+@media (max-width: 700px) {
+  .status-row { grid-template-columns: 1fr 1fr; }
+  .header h1 { font-size: 40px; }
+}

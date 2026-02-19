@@ -3,50 +3,68 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Wealth Dashboard</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <style>
-        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-        :root {
-            --bg: #0a0a0f;
-            --card: #16161f;
-            --border: rgba(255,255,255,0.06);
-            --text: #ffffff;
-            --text-dim: rgba(255,255,255,0.6);
-            --accent: #1db954;
-        }
-        body {
-            font-family: 'Inter', sans-serif;
-            background: var(--bg);
-            color: var(--text);
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-        }
-        .header {
-            position: absolute;
-            top: 0;
-            left: 0;
-            padding: 2rem;
-        }
-        .header a {
-            color: var(--text-dim);
-            text-decoration: none;
-            font-size: 0.85rem;
-            transition: color 0.2s;
-        }
-        .header a:hover { color: var(--text); }
-        .icon { font-size: 3rem; margin-bottom: 1rem; }
-        h1 { font-size: 1.8rem; font-weight: 700; margin-bottom: 0.5rem; }
-        p { color: var(--text-dim); font-size: 1rem; }
-    </style>
+    <title>Wealth Intelligence | Unlimited Leverage</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div class="header"><a href="../">&larr; Hub</a></div>
-    <div class="icon">💰</div>
-    <h1>Wealth Dashboard</h1>
-    <p>Coming soon.</p>
+    <div class="grain"></div>
+    <div class="app">
+
+        <!-- Header -->
+        <div id="header" class="header"></div>
+
+        <!-- Status Row (5 KPIs) -->
+        <div id="status-row" class="status-row"></div>
+
+        <!-- Row 1: Revenue Chart + Income Statement -->
+        <div class="grid-wide">
+            <div class="panel">
+                <div class="panel-hdr">
+                    <div class="panel-title">Revenue &amp; Net Income</div>
+                </div>
+                <div class="chart-wrap">
+                    <canvas id="revenue-chart"></canvas>
+                </div>
+            </div>
+            <div id="income-statement" class="panel" style="overflow:auto"></div>
+        </div>
+
+        <!-- Row 2: Net Worth Chart + Prosperity -->
+        <div class="grid-wide">
+            <div class="panel">
+                <div class="panel-hdr">
+                    <div class="panel-title">Net Worth &amp; Liquid Assets</div>
+                </div>
+                <div class="chart-wrap">
+                    <canvas id="networth-chart"></canvas>
+                </div>
+            </div>
+            <div id="prosperity-panel" class="panel"></div>
+        </div>
+
+        <!-- Row 3: Lifestyle Chart + Wealth Coach -->
+        <div class="grid-wide">
+            <div class="panel">
+                <div class="panel-hdr">
+                    <div class="panel-title">Lifestyle Expenses</div>
+                    <div id="lifestyle-badge" class="panel-badge"></div>
+                </div>
+                <div class="chart-wrap">
+                    <canvas id="lifestyle-chart"></canvas>
+                </div>
+            </div>
+            <div id="wealth-coach" class="panel"></div>
+        </div>
+
+        <!-- Row 4: Asset Library + Selling Priority -->
+        <div class="grid-wide">
+            <div id="asset-library" class="panel"></div>
+            <div id="selling-priority" class="panel"></div>
+        </div>
+
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <script type="module" src="app.js"></script>
 </body>
 </html>
