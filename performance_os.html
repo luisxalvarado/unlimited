@@ -1,0 +1,2285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Performance Intelligence OS</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Mono:wght@300;400;500&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #080b0f;
+  --surface: #0d1117;
+  --surface2: #131920;
+  --surface3: #1a2330;
+  --border: rgba(255,255,255,0.06);
+  --border2: rgba(255,255,255,0.12);
+  --text: #e8edf2;
+  --text2: #8b9db0;
+  --text3: #4a5c6e;
+  --green: #00e5a0;
+  --green-dim: rgba(0,229,160,0.12);
+  --green-mid: rgba(0,229,160,0.25);
+  --yellow: #f5c542;
+  --yellow-dim: rgba(245,197,66,0.12);
+  --red: #ff4d6d;
+  --red-dim: rgba(255,77,109,0.12);
+  --blue: #4da6ff;
+  --blue-dim: rgba(77,166,255,0.1);
+  --purple: #a78bfa;
+  --accent: #00e5a0;
+  --glow: 0 0 30px rgba(0,229,160,0.15);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'DM Mono', monospace;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* Background grid */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: 
+    linear-gradient(rgba(0,229,160,0.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,229,160,0.02) 1px, transparent 1px);
+  background-size: 40px 40px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.os-shell {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-rows: 56px 1fr;
+  min-height: 100vh;
+}
+
+/* ── TOP BAR ── */
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+  background: rgba(8,11,15,0.9);
+  border-bottom: 1px solid var(--border);
+  backdrop-filter: blur(20px);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.brand-icon {
+  width: 28px;
+  height: 28px;
+  background: var(--green);
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+}
+
+.brand-name {
+  font-family: 'Syne', sans-serif;
+  font-weight: 700;
+  font-size: 14px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--text);
+}
+
+.brand-sub {
+  font-size: 10px;
+  color: var(--text3);
+  letter-spacing: 0.1em;
+}
+
+.topbar-nav {
+  display: flex;
+  gap: 2px;
+}
+
+.nav-btn {
+  background: none;
+  border: none;
+  color: var(--text3);
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  padding: 6px 14px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.15s;
+  text-transform: uppercase;
+}
+
+.nav-btn:hover { color: var(--text); background: var(--surface2); }
+.nav-btn.active { color: var(--green); background: var(--green-dim); }
+
+.topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.sync-btn {
+  background: var(--green-dim);
+  border: 1px solid rgba(0,229,160,0.2);
+  color: var(--green);
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  padding: 5px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  text-transform: uppercase;
+  transition: all 0.15s;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.sync-btn:hover { background: var(--green-mid); }
+.sync-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--green); animation: pulse 2s infinite; }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+.date-display {
+  font-size: 11px;
+  color: var(--text3);
+  letter-spacing: 0.05em;
+}
+
+/* ── MAIN LAYOUT ── */
+.main {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0;
+}
+
+.view { display: none; padding: 24px; }
+.view.active { display: block; }
+
+/* ── CARDS ── */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 20px;
+  position: relative;
+  overflow: hidden;
+}
+
+.card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--border2), transparent);
+}
+
+.card-label {
+  font-size: 10px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--text3);
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.card-label::before {
+  content: '';
+  width: 16px;
+  height: 1px;
+  background: var(--text3);
+}
+
+/* ── COMMAND CENTER ── */
+#cmd .grid-hero {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+#cmd .grid-mid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+#cmd .grid-bottom {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+/* READINESS CARD */
+.readiness-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 28px;
+  position: relative;
+  overflow: hidden;
+}
+
+.readiness-card .glow-ring {
+  position: absolute;
+  top: -60px; right: -60px;
+  width: 200px; height: 200px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(0,229,160,0.08) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.readiness-score {
+  display: flex;
+  align-items: flex-end;
+  gap: 12px;
+  margin: 16px 0;
+}
+
+.score-big {
+  font-family: 'Syne', sans-serif;
+  font-size: 72px;
+  font-weight: 800;
+  line-height: 1;
+  color: var(--yellow);
+}
+
+.score-big.green { color: var(--green); }
+.score-big.red { color: var(--red); }
+
+.score-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding-bottom: 8px;
+}
+
+.score-zone {
+  font-family: 'Syne', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--yellow);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.score-zone.green { color: var(--green); }
+.score-zone.red { color: var(--red); }
+
+.score-sub {
+  font-size: 11px;
+  color: var(--text3);
+}
+
+.readiness-metrics {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.rm-item {
+  background: var(--surface2);
+  border-radius: 8px;
+  padding: 10px;
+}
+
+.rm-val {
+  font-family: 'Syne', sans-serif;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.rm-lbl {
+  font-size: 10px;
+  color: var(--text3);
+  letter-spacing: 0.08em;
+  margin-top: 2px;
+}
+
+/* AI BRIEF CARD */
+.ai-card {
+  background: linear-gradient(135deg, var(--surface) 0%, rgba(0,229,160,0.03) 100%);
+  border: 1px solid rgba(0,229,160,0.15);
+  border-radius: 12px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.ai-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 10px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--green);
+}
+
+.ai-pulse {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--green);
+  box-shadow: 0 0 8px var(--green);
+  animation: pulse 2s infinite;
+}
+
+.ai-verdict {
+  font-family: 'Instrument Serif', serif;
+  font-size: 16px;
+  line-height: 1.5;
+  color: var(--text);
+  font-style: italic;
+}
+
+.ai-targets {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.ai-target-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 10px;
+  background: var(--surface2);
+  border-radius: 6px;
+  border-left: 2px solid var(--green);
+}
+
+.ai-target-row.warn { border-left-color: var(--yellow); }
+.ai-target-row.caution { border-left-color: var(--red); }
+
+.ai-target-label {
+  font-size: 10px;
+  color: var(--text3);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.ai-target-val {
+  font-family: 'Syne', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+/* SLEEP CARD */
+.sleep-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 20px;
+}
+
+.sleep-arc {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin: 12px 0;
+}
+
+.sleep-total {
+  font-family: 'Syne', sans-serif;
+  font-size: 36px;
+  font-weight: 800;
+  color: var(--purple);
+}
+
+.sleep-stages {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+}
+
+.stage-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+}
+
+.stage-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.stage-bar-wrap { flex: 1; background: var(--surface3); border-radius: 2px; height: 4px; }
+.stage-bar { height: 4px; border-radius: 2px; }
+.stage-lbl { color: var(--text3); width: 32px; text-align: right; font-size: 10px; }
+
+/* BIOMETRICS GRID */
+.bio-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.bio-item {
+  background: var(--surface2);
+  border-radius: 8px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.bio-val {
+  font-family: 'Syne', sans-serif;
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.bio-lbl {
+  font-size: 10px;
+  color: var(--text3);
+  letter-spacing: 0.06em;
+}
+
+.bio-delta {
+  font-size: 10px;
+  color: var(--text3);
+}
+
+.bio-delta.up { color: var(--green); }
+.bio-delta.down { color: var(--red); }
+
+/* BODY COMP CARD */
+.bodycomp-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 20px;
+}
+
+.goal-bars {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-top: 8px;
+}
+
+.goal-item {}
+.goal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 6px;
+}
+
+.goal-name {
+  font-size: 11px;
+  color: var(--text2);
+  letter-spacing: 0.05em;
+}
+
+.goal-nums {
+  font-family: 'Syne', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.goal-num-target { color: var(--text3); font-size: 11px; font-weight: 400; }
+
+.goal-track {
+  background: var(--surface3);
+  border-radius: 3px;
+  height: 5px;
+  position: relative;
+  overflow: hidden;
+}
+
+.goal-fill {
+  height: 100%;
+  border-radius: 3px;
+  background: linear-gradient(90deg, var(--green), rgba(0,229,160,0.6));
+  transition: width 0.8s ease;
+}
+
+/* WORKOUT LOG */
+.workout-log {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 20px;
+}
+
+.wk-session {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.wk-session:last-child { border-bottom: none; }
+
+.wk-icon {
+  width: 36px; height: 36px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  flex-shrink: 0;
+}
+
+.wk-meta { flex: 1; }
+.wk-name { font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 600; }
+.wk-date { font-size: 10px; color: var(--text3); margin-top: 1px; }
+
+.wk-stats {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+}
+
+.wk-strain {
+  font-family: 'Syne', sans-serif;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.wk-dur { font-size: 10px; color: var(--text3); }
+
+.wk-zones {
+  display: flex;
+  gap: 2px;
+  margin-top: 4px;
+  height: 3px;
+  width: 80px;
+}
+
+.wk-zone-seg { border-radius: 2px; }
+
+/* ── 30-DAY TREND ── */
+.sparkline-wrap {
+  display: flex;
+  align-items: flex-end;
+  gap: 3px;
+  height: 50px;
+  margin: 8px 0;
+}
+
+.spark-bar {
+  flex: 1;
+  border-radius: 2px 2px 0 0;
+  min-height: 3px;
+  transition: opacity 0.15s;
+  cursor: pointer;
+}
+
+.spark-bar:hover { opacity: 0.8; }
+
+/* ── TRENDS VIEW ── */
+#trends .trends-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+#trends .trends-wide {
+  margin-bottom: 16px;
+}
+
+.chart-area {
+  height: 140px;
+  position: relative;
+  margin-top: 12px;
+}
+
+.chart-svg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+/* RECOVERY ZONE STACK */
+.zone-months {
+  display: flex;
+  gap: 4px;
+  align-items: flex-end;
+  height: 120px;
+  margin-top: 16px;
+}
+
+.zone-col {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100%;
+  gap: 1px;
+  cursor: pointer;
+  position: relative;
+}
+
+.zone-seg {
+  width: 100%;
+  border-radius: 2px;
+  min-height: 1px;
+}
+
+.zone-month-lbl {
+  font-size: 8px;
+  color: var(--text3);
+  margin-top: 4px;
+  letter-spacing: 0.05em;
+}
+
+/* TRAINING LOAD */
+.load-months {
+  display: flex;
+  gap: 4px;
+  align-items: flex-end;
+  height: 100px;
+  margin-top: 16px;
+}
+
+.load-col {
+  flex: 1;
+  display: flex;
+  flex-direction: column-reverse;
+  gap: 1px;
+  cursor: pointer;
+}
+
+.load-seg { width: 100%; border-radius: 1px; }
+.load-month-lbl { font-size: 8px; color: var(--text3); margin-top: 4px; text-align: center; }
+
+/* HRV TREND */
+.hrv-timeline {
+  position: relative;
+  height: 120px;
+  margin-top: 12px;
+}
+
+/* BODY COMP ARC */
+.comp-timeline {
+  margin-top: 16px;
+}
+
+.comp-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.comp-label {
+  font-size: 10px;
+  color: var(--text3);
+  letter-spacing: 0.08em;
+  width: 80px;
+  text-transform: uppercase;
+  flex-shrink: 0;
+}
+
+.comp-bar-wrap {
+  flex: 1;
+  height: 6px;
+  background: var(--surface3);
+  border-radius: 3px;
+  position: relative;
+  overflow: visible;
+}
+
+.comp-fill {
+  height: 100%;
+  border-radius: 3px;
+  background: linear-gradient(90deg, rgba(0,229,160,0.3), var(--green));
+  position: relative;
+}
+
+.comp-marker {
+  position: absolute;
+  right: -1px;
+  top: -4px;
+  width: 14px; height: 14px;
+  border-radius: 50%;
+  background: var(--green);
+  border: 2px solid var(--bg);
+  box-shadow: 0 0 8px var(--green);
+}
+
+.comp-val {
+  font-family: 'Syne', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text);
+  width: 60px;
+  text-align: right;
+}
+
+.comp-goal {
+  font-size: 10px;
+  color: var(--text3);
+  width: 50px;
+  text-align: right;
+}
+
+/* ── WORKOUTS VIEW ── */
+#workouts .wk-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.session-list { display: flex; flex-direction: column; gap: 12px; margin-top: 12px; }
+
+.session-card {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 14px;
+  cursor: pointer;
+  transition: all 0.15s;
+  position: relative;
+}
+
+.session-card:hover { border-color: var(--border2); }
+.session-card.selected { border-color: rgba(0,229,160,0.3); background: rgba(0,229,160,0.04); }
+
+.session-card .sc-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 10px;
+}
+
+.sc-date { font-size: 11px; color: var(--text3); }
+.sc-strain { font-family: 'Syne', sans-serif; font-size: 22px; font-weight: 800; }
+.sc-sport { font-size: 11px; color: var(--text2); margin-top: 1px; }
+.sc-rec-in { font-size: 10px; margin-top: 2px; }
+
+.zone-bars {
+  display: flex;
+  gap: 3px;
+  height: 24px;
+  align-items: flex-end;
+  margin-top: 8px;
+}
+
+.zone-bar {
+  flex: 1;
+  border-radius: 2px 2px 0 0;
+  min-height: 2px;
+}
+
+.zone-labels {
+  display: flex;
+  gap: 3px;
+  margin-top: 3px;
+}
+
+.zone-labels span {
+  flex: 1;
+  font-size: 8px;
+  color: var(--text3);
+  text-align: center;
+}
+
+/* COMPARISON PANEL */
+.compare-panel {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 20px;
+}
+
+.compare-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.compare-sessions {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  gap: 12px;
+  align-items: center;
+}
+
+.cs-block {
+  background: var(--surface2);
+  border-radius: 8px;
+  padding: 12px;
+}
+
+.cs-label { font-size: 10px; color: var(--text3); margin-bottom: 8px; letter-spacing: 0.08em; }
+.cs-metric { display: flex; justify-content: space-between; align-items: center; padding: 4px 0; border-bottom: 1px solid var(--border); }
+.cs-metric:last-child { border-bottom: none; }
+.cs-metric-name { font-size: 10px; color: var(--text3); }
+.cs-metric-val { font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 600; }
+
+.cs-vs {
+  font-family: 'Instrument Serif', serif;
+  font-size: 20px;
+  font-style: italic;
+  color: var(--text3);
+  text-align: center;
+}
+
+/* AI INSIGHT BOX */
+.ai-insight {
+  background: linear-gradient(135deg, var(--surface2), rgba(0,229,160,0.04));
+  border: 1px solid rgba(0,229,160,0.12);
+  border-radius: 8px;
+  padding: 14px;
+  margin-top: 16px;
+}
+
+.ai-insight-header {
+  font-size: 10px;
+  color: var(--green);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.ai-insight p {
+  font-family: 'Instrument Serif', serif;
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--text2);
+  font-style: italic;
+}
+
+/* ── GOALS VIEW ── */
+#goals .goals-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.goals-full { margin-bottom: 16px; }
+
+.timeframe-tabs {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 20px;
+}
+
+.tf-tab {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--text3);
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 6px 14px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.tf-tab:hover { color: var(--text); border-color: var(--border2); }
+.tf-tab.active { color: var(--green); border-color: rgba(0,229,160,0.3); background: var(--green-dim); }
+
+.milestone-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 20px;
+}
+
+.milestone-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.milestone-item:last-child { border-bottom: none; }
+
+.ms-status {
+  width: 24px; height: 24px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  flex-shrink: 0;
+}
+
+.ms-on-track { background: var(--green-dim); color: var(--green); border: 1px solid rgba(0,229,160,0.2); }
+.ms-at-risk { background: var(--yellow-dim); color: var(--yellow); border: 1px solid rgba(245,197,66,0.2); }
+.ms-off-track { background: var(--red-dim); color: var(--red); border: 1px solid rgba(255,77,109,0.2); }
+
+.ms-content { flex: 1; }
+.ms-name { font-size: 12px; color: var(--text); }
+.ms-detail { font-size: 10px; color: var(--text3); margin-top: 2px; }
+
+.ms-progress {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 3px;
+}
+
+.ms-pct { font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 700; color: var(--text); }
+.ms-bar-mini { width: 60px; height: 3px; background: var(--surface3); border-radius: 2px; }
+.ms-fill-mini { height: 100%; border-radius: 2px; background: var(--green); }
+
+/* Weekly goals */
+.weekly-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 6px;
+  margin-top: 12px;
+}
+
+.day-cell {
+  background: var(--surface2);
+  border-radius: 6px;
+  padding: 8px 4px;
+  text-align: center;
+}
+
+.day-cell .dc-day { font-size: 9px; color: var(--text3); letter-spacing: 0.05em; margin-bottom: 6px; }
+.day-cell .dc-rec { font-family: 'Syne', sans-serif; font-size: 15px; font-weight: 700; }
+.day-cell .dc-strain { font-size: 9px; color: var(--text3); margin-top: 2px; }
+.day-cell .dc-bar { height: 3px; border-radius: 2px; margin-top: 6px; }
+.day-cell.today { border: 1px solid rgba(0,229,160,0.3); }
+
+/* SCROLLBAR */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--surface3); border-radius: 2px; }
+
+/* TOOLTIP */
+.tooltip {
+  position: fixed;
+  background: var(--surface3);
+  border: 1px solid var(--border2);
+  border-radius: 6px;
+  padding: 8px 12px;
+  font-size: 11px;
+  color: var(--text);
+  pointer-events: none;
+  z-index: 999;
+  display: none;
+}
+
+/* FADE IN */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.view.active .card,
+.view.active .readiness-card,
+.view.active .ai-card,
+.view.active .sleep-card,
+.view.active .bodycomp-card,
+.view.active .workout-log,
+.view.active .milestone-card,
+.view.active .compare-panel {
+  animation: fadeUp 0.4s ease both;
+}
+
+.view.active > * { animation-delay: calc(var(--i, 0) * 0.05s); }
+
+/* STATUS TAG */
+.status-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.tag-green { background: var(--green-dim); color: var(--green); }
+.tag-yellow { background: var(--yellow-dim); color: var(--yellow); }
+.tag-red { background: var(--red-dim); color: var(--red); }
+
+/* Insight banner */
+.insight-banner {
+  background: linear-gradient(90deg, rgba(0,229,160,0.06), transparent);
+  border-left: 2px solid var(--green);
+  border-radius: 0 8px 8px 0;
+  padding: 10px 14px;
+  margin-top: 12px;
+  font-family: 'Instrument Serif', serif;
+  font-size: 13px;
+  font-style: italic;
+  color: var(--text2);
+  line-height: 1.5;
+}
+
+</style>
+</head>
+<body>
+
+<div class="os-shell">
+
+<!-- TOP BAR -->
+<div class="topbar">
+  <div class="brand">
+    <div class="brand-icon">⚡</div>
+    <div>
+      <div class="brand-name">Performance Intelligence</div>
+      <div class="brand-sub">Health OS · v2.0</div>
+    </div>
+  </div>
+
+  <nav class="topbar-nav">
+    <button class="nav-btn active" onclick="switchView('cmd', this)">Command Center</button>
+    <button class="nav-btn" onclick="switchView('trends', this)">Trends</button>
+    <button class="nav-btn" onclick="switchView('workouts', this)">Workouts</button>
+    <button class="nav-btn" onclick="switchView('goals', this)">Goals</button>
+  </nav>
+
+  <div class="topbar-right">
+    <button class="sync-btn" onclick="syncNow()">
+      <div class="sync-dot" id="syncDot"></div>
+      <span id="syncLabel">Live</span>
+    </button>
+    <div class="date-display" id="dateDisplay"></div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+
+  <!-- ══════════════ COMMAND CENTER ══════════════ -->
+  <div class="view active" id="cmd">
+
+    <!-- Hero row -->
+    <div class="grid-hero">
+
+      <!-- Readiness -->
+      <div class="readiness-card">
+        <div class="glow-ring"></div>
+        <div class="card-label">Today's Readiness</div>
+        <div class="readiness-score">
+          <div class="score-big yellow" id="recScore">51</div>
+          <div class="score-meta">
+            <div class="score-zone yellow" id="recZone">Yellow Zone</div>
+            <div class="score-sub" id="recDate">Feb 18, 2026</div>
+          </div>
+        </div>
+        <div class="readiness-metrics">
+          <div class="rm-item">
+            <div class="rm-val" id="todayHrv">48.2<span style="font-size:12px;color:var(--text3)">ms</span></div>
+            <div class="rm-lbl">HRV</div>
+          </div>
+          <div class="rm-item">
+            <div class="rm-val" id="todayRhr">66<span style="font-size:12px;color:var(--text3)">bpm</span></div>
+            <div class="rm-lbl">RHR</div>
+          </div>
+          <div class="rm-item">
+            <div class="rm-val" id="todaySpo2">96.5<span style="font-size:12px;color:var(--text3)">%</span></div>
+            <div class="rm-lbl">SpO₂</div>
+          </div>
+        </div>
+        <div class="insight-banner" id="recInsight"></div>
+      </div>
+
+      <!-- AI Brief -->
+      <div class="ai-card">
+        <div class="ai-header">
+          <div class="ai-pulse"></div>
+          Intelligence Brief
+        </div>
+        <div class="ai-verdict" id="aiVerdict"></div>
+        <div class="ai-targets" id="aiTargets"></div>
+      </div>
+
+      <!-- Sleep -->
+      <div class="sleep-card">
+        <div class="card-label">Last Night's Sleep</div>
+        <div class="sleep-arc">
+          <div class="sleep-total" id="sleepTotal">7.2<span style="font-size:16px;color:var(--text3)">h</span></div>
+          <div class="sleep-stages" id="sleepStages"></div>
+        </div>
+        <div style="margin-top:12px">
+          <div style="display:flex;justify-content:space-between;font-size:10px;margin-bottom:6px">
+            <span style="color:var(--text3)">Sleep Performance</span>
+            <span id="sleepPerf" style="color:var(--text)">88%</span>
+          </div>
+          <div style="background:var(--surface3);border-radius:3px;height:5px">
+            <div id="sleepPerfBar" style="height:100%;border-radius:3px;background:var(--purple);width:88%"></div>
+          </div>
+        </div>
+        <div style="margin-top:12px;display:flex;gap:12px">
+          <div>
+            <div style="font-size:10px;color:var(--text3)">Efficiency</div>
+            <div id="sleepEff" style="font-family:'Syne',sans-serif;font-size:14px;font-weight:700">85%</div>
+          </div>
+          <div>
+            <div style="font-size:10px;color:var(--text3)">Resp Rate</div>
+            <div id="sleepResp" style="font-family:'Syne',sans-serif;font-size:14px;font-weight:700">15.3</div>
+          </div>
+          <div>
+            <div style="font-size:10px;color:var(--text3)">Sleep Need</div>
+            <div id="sleepNeed" style="font-family:'Syne',sans-serif;font-size:14px;font-weight:700;color:var(--green)">—h</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Mid row -->
+    <div class="grid-mid">
+
+      <!-- Weight / Body Comp -->
+      <div class="card">
+        <div class="card-label">Body Composition</div>
+        <div style="display:flex;align-items:baseline;gap:8px;margin:8px 0 16px">
+          <div style="font-family:'Syne',sans-serif;font-size:36px;font-weight:800" id="weightDisplay">154.2</div>
+          <div style="font-size:12px;color:var(--text3)">lbs</div>
+          <div style="margin-left:4px;font-size:11px;color:var(--green)">→ 162 goal</div>
+        </div>
+        <div class="goal-bars" id="compGoalBars"></div>
+      </div>
+
+      <!-- Biometrics -->
+      <div class="card">
+        <div class="card-label">Biometrics</div>
+        <div class="bio-grid" id="bioGrid" style="margin-top:8px"></div>
+      </div>
+
+      <!-- 30-Day Recovery Sparkline -->
+      <div class="card">
+        <div class="card-label">30-Day Recovery Trend</div>
+        <div class="sparkline-wrap" id="recoverySparkline"></div>
+        <div style="display:flex;justify-content:space-between;font-size:9px;color:var(--text3);margin-top:4px">
+          <span>Jan 20</span>
+          <span>Feb 4</span>
+          <span>Feb 18</span>
+        </div>
+        <div style="margin-top:12px;display:flex;gap:12px">
+          <div>
+            <div style="font-size:10px;color:var(--text3)">7d Avg Recovery</div>
+            <div id="avgRec7d" style="font-family:'Syne',sans-serif;font-size:16px;font-weight:700">—%</div>
+          </div>
+          <div>
+            <div style="font-size:10px;color:var(--text3)">7d Avg HRV</div>
+            <div id="avgHrv7d" style="font-family:'Syne',sans-serif;font-size:16px;font-weight:700">—ms</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bottom row -->
+    <div class="grid-bottom">
+
+      <!-- Recent Workouts -->
+      <div class="workout-log">
+        <div class="card-label">Recent Workouts</div>
+        <div id="recentWorkouts"></div>
+      </div>
+
+      <!-- HRV Sparkline + Calories -->
+      <div style="display:flex;flex-direction:column;gap:16px">
+        <div class="card">
+          <div class="card-label">30-Day HRV Trend</div>
+          <div style="display:flex;align-items:baseline;gap:8px;margin-bottom:8px">
+            <div style="font-family:'Syne',sans-serif;font-size:28px;font-weight:800;color:var(--blue)" id="currentHrv">48.2</div>
+            <div style="font-size:11px;color:var(--text3)">ms current</div>
+            <div style="margin-left:auto;font-size:10px;color:var(--text3)">Personal best avg: <span style="color:var(--green)">75.6ms</span></div>
+          </div>
+          <div class="sparkline-wrap" id="hrvSparkline"></div>
+          <div style="display:flex;justify-content:space-between;font-size:9px;color:var(--text3);margin-top:4px">
+            <span>Jan 20</span>
+            <span>Feb 4</span>
+            <span>Feb 18</span>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-label">Calorie & Energy</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-top:8px">
+            <div>
+              <div style="font-size:10px;color:var(--text3)">BMR</div>
+              <div style="font-family:'Syne',sans-serif;font-size:20px;font-weight:700">1,648</div>
+              <div style="font-size:9px;color:var(--text3)">kcal/day</div>
+            </div>
+            <div>
+              <div style="font-size:10px;color:var(--text3)">Target Intake</div>
+              <div id="calTarget" style="font-family:'Syne',sans-serif;font-size:20px;font-weight:700;color:var(--green)">—</div>
+              <div style="font-size:9px;color:var(--text3)">kcal today</div>
+            </div>
+            <div>
+              <div style="font-size:10px;color:var(--text3)">Visceral Fat</div>
+              <div style="font-family:'Syne',sans-serif;font-size:20px;font-weight:700">5</div>
+              <div style="font-size:9px;color:var(--text3)">level (healthy)</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ══════════════ TRENDS ══════════════ -->
+  <div class="view" id="trends">
+
+    <div class="trends-wide">
+      <div class="card">
+        <div class="card-label">HRV Trajectory — 13 Month History</div>
+        <div style="display:flex;gap:24px;margin:8px 0 16px;align-items:center">
+          <div>
+            <div style="font-size:10px;color:var(--text3)">Current avg</div>
+            <div style="font-family:'Syne',sans-serif;font-size:24px;font-weight:800;color:var(--yellow)">45.1ms</div>
+          </div>
+          <div>
+            <div style="font-size:10px;color:var(--text3)">Personal best avg</div>
+            <div style="font-family:'Syne',sans-serif;font-size:24px;font-weight:800;color:var(--green)">75.6ms</div>
+          </div>
+          <div>
+            <div style="font-size:10px;color:var(--text3)">All-time peak</div>
+            <div style="font-family:'Syne',sans-serif;font-size:24px;font-weight:800;color:var(--blue)">105.8ms</div>
+          </div>
+          <div style="margin-left:auto">
+            <span class="status-tag tag-yellow">⬇ 28ms below peak avg</span>
+          </div>
+        </div>
+        <div id="hrvMonthChart" style="height:120px;position:relative;margin-top:8px"></div>
+        <div style="margin-top:8px" class="insight-banner">
+          Your HRV peaked in Aug 2025 (75.6ms avg, 105.8ms single-day max) then entered a sustained decline through Jan–Feb 2026. The pattern mirrors your Sep crash: high training load accumulation followed by abrupt under-stimulation. The goal is to rebuild systematically — you've done it before.
+        </div>
+      </div>
+    </div>
+
+    <div class="trends-grid">
+      <!-- Recovery Zones -->
+      <div class="card">
+        <div class="card-label">Recovery Zone Distribution — Monthly</div>
+        <div style="display:flex;gap:12px;margin:8px 0;font-size:10px">
+          <span style="color:var(--green)">■ Green (≥67%)</span>
+          <span style="color:var(--yellow)">■ Yellow (34–66%)</span>
+          <span style="color:var(--red)">■ Red (&lt;34%)</span>
+        </div>
+        <div class="zone-months" id="zoneMonthChart"></div>
+      </div>
+
+      <!-- Training Load -->
+      <div class="card">
+        <div class="card-label">Training Load — Monthly Breakdown</div>
+        <div style="display:flex;gap:12px;margin:8px 0;font-size:10px">
+          <span style="color:var(--blue)">■ Lifting</span>
+          <span style="color:var(--red)">■ Combat</span>
+          <span style="color:var(--green)">■ Cardio</span>
+          <span style="color:var(--purple)">■ Recovery</span>
+        </div>
+        <div class="load-months" id="loadMonthChart"></div>
+      </div>
+    </div>
+
+    <!-- Body Comp Arc -->
+    <div class="card">
+      <div class="card-label">Body Composition Arc — DXA May 2025 → Now</div>
+      <div class="comp-timeline">
+        <div class="comp-row">
+          <div class="comp-label">Weight</div>
+          <div style="font-size:10px;color:var(--text3);width:60px">139 lbs</div>
+          <div class="comp-bar-wrap">
+            <div class="comp-fill" style="width:72%"><div class="comp-marker"></div></div>
+          </div>
+          <div class="comp-val">154.2 lbs</div>
+          <div class="comp-goal">→ 162</div>
+        </div>
+        <div class="comp-row">
+          <div class="comp-label">Body Fat</div>
+          <div style="font-size:10px;color:var(--text3);width:60px">26%</div>
+          <div class="comp-bar-wrap" style="background:var(--surface3)">
+            <div style="height:100%;border-radius:3px;background:linear-gradient(90deg,var(--red-dim),var(--yellow));width:100%;position:relative">
+              <div style="position:absolute;left:72%;height:100%;right:0;background:var(--surface3);border-radius:0 3px 3px 0"></div>
+              <div style="position:absolute;left:71%;top:-4px;width:14px;height:14px;border-radius:50%;background:var(--yellow);border:2px solid var(--bg);box-shadow:0 0 8px var(--yellow)"></div>
+            </div>
+          </div>
+          <div class="comp-val">18.7%</div>
+          <div class="comp-goal">→ 15%</div>
+        </div>
+        <div class="comp-row">
+          <div class="comp-label">Muscle</div>
+          <div style="font-size:10px;color:var(--text3);width:60px">31.1 kg</div>
+          <div class="comp-bar-wrap">
+            <div class="comp-fill" style="width:38%"><div class="comp-marker"></div></div>
+          </div>
+          <div class="comp-val">33.0 kg</div>
+          <div class="comp-goal">→ 38 kg</div>
+        </div>
+        <div class="comp-row">
+          <div class="comp-label">InBody</div>
+          <div style="font-size:10px;color:var(--text3);width:60px">—</div>
+          <div class="comp-bar-wrap">
+            <div class="comp-fill" style="width:82%"><div class="comp-marker"></div></div>
+          </div>
+          <div class="comp-val">82 / 100</div>
+          <div class="comp-goal">→ 95</div>
+        </div>
+      </div>
+      <div class="insight-banner" style="margin-top:16px">
+        9 months of simultaneous muscle gain and fat loss — from 139 lbs / 26% BF to 154.2 lbs / 18.7% BF. That's a rare recomp. +1.9kg muscle while dropping 7.3 percentage points of body fat. The next phase is pushing muscle mass to 38kg while driving BF below 15%.
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ══════════════ WORKOUTS ══════════════ -->
+  <div class="view" id="workouts">
+
+    <div class="wk-grid">
+      <!-- Lifting History -->
+      <div class="card">
+        <div class="card-label">Lifting Sessions — Select to Compare</div>
+        <div class="session-list" id="liftSessionList"></div>
+      </div>
+
+      <!-- Boxing/Combat History -->
+      <div class="card">
+        <div class="card-label">Combat Sessions</div>
+        <div class="session-list" id="combatSessionList"></div>
+      </div>
+    </div>
+
+    <!-- Comparison Panel -->
+    <div class="compare-panel" id="comparePanel">
+      <div class="compare-header">
+        <div style="font-size:10px;color:var(--green);letter-spacing:0.15em;text-transform:uppercase;display:flex;align-items:center;gap:8px">
+          <div style="width:6px;height:6px;border-radius:50%;background:var(--green)"></div>
+          Session Comparison
+        </div>
+        <div style="font-size:10px;color:var(--text3)">Click two sessions above to compare</div>
+      </div>
+      <div class="compare-sessions" id="compareSessions">
+        <div style="text-align:center;color:var(--text3);font-size:12px;padding:20px;grid-column:span 3">
+          Select a session above to begin analysis
+        </div>
+      </div>
+      <div class="ai-insight" id="compareInsight" style="display:none">
+        <div class="ai-insight-header">
+          <div style="width:6px;height:6px;border-radius:50%;background:var(--green)"></div>
+          Performance Intelligence
+        </div>
+        <p id="compareInsightText"></p>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ══════════════ GOALS ══════════════ -->
+  <div class="view" id="goals">
+
+    <div class="timeframe-tabs">
+      <button class="tf-tab active" onclick="switchGoalView('weekly', this)">This Week</button>
+      <button class="tf-tab" onclick="switchGoalView('monthly', this)">Monthly</button>
+      <button class="tf-tab" onclick="switchGoalView('quarterly', this)">Quarterly</button>
+      <button class="tf-tab" onclick="switchGoalView('annual', this)">Annual 2026</button>
+    </div>
+
+    <!-- Weekly View -->
+    <div id="goal-weekly">
+      <div class="card" style="margin-bottom:16px">
+        <div class="card-label">This Week — Feb 12–18, 2026</div>
+        <div class="weekly-grid" id="weeklyGrid"></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px">
+        <div class="card">
+          <div class="card-label">Strain Budget</div>
+          <div style="font-family:'Syne',sans-serif;font-size:36px;font-weight:800;margin:8px 0" id="weekStrain">—</div>
+          <div style="font-size:10px;color:var(--text3)">week total</div>
+          <div style="margin-top:12px;height:4px;background:var(--surface3);border-radius:2px">
+            <div id="weekStrainBar" style="height:100%;border-radius:2px;background:var(--green);width:0%"></div>
+          </div>
+          <div style="display:flex;justify-content:space-between;font-size:9px;color:var(--text3);margin-top:4px">
+            <span>0</span><span>Target: 70</span>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-label">Green Days</div>
+          <div style="font-family:'Syne',sans-serif;font-size:36px;font-weight:800;margin:8px 0;color:var(--green)" id="weekGreenDays">—</div>
+          <div style="font-size:10px;color:var(--text3)">of 7 days</div>
+          <div class="insight-banner" style="margin-top:12px;font-size:11px" id="weekInsight"></div>
+        </div>
+        <div class="card">
+          <div class="card-label">Sleep Avg</div>
+          <div style="font-family:'Syne',sans-serif;font-size:36px;font-weight:800;margin:8px 0;color:var(--purple)" id="weekSleepAvg">—</div>
+          <div style="font-size:10px;color:var(--text3)">hrs/night avg</div>
+          <div style="margin-top:12px;font-size:10px;color:var(--text3)">Target: 7.5h+ per night</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Monthly View -->
+    <div id="goal-monthly" style="display:none">
+      <div class="milestone-card">
+        <div class="card-label" style="margin-bottom:16px">February 2026 Targets</div>
+        <div class="milestone-item">
+          <div class="ms-status ms-at-risk">△</div>
+          <div class="ms-content">
+            <div class="ms-name">HRV Baseline Recovery</div>
+            <div class="ms-detail">Current 45.1ms avg → Target 52ms avg by month end</div>
+          </div>
+          <div class="ms-progress">
+            <div class="ms-pct" style="color:var(--yellow)">67%</div>
+            <div class="ms-bar-mini"><div class="ms-fill-mini" style="width:67%;background:var(--yellow)"></div></div>
+          </div>
+        </div>
+        <div class="milestone-item">
+          <div class="ms-status ms-at-risk">△</div>
+          <div class="ms-content">
+            <div class="ms-name">Green Recovery Days</div>
+            <div class="ms-detail">Target ≥40% green days — currently 28% (5 of 18 days)</div>
+          </div>
+          <div class="ms-progress">
+            <div class="ms-pct" style="color:var(--yellow)">28%</div>
+            <div class="ms-bar-mini"><div class="ms-fill-mini" style="width:28%;background:var(--yellow)"></div></div>
+          </div>
+        </div>
+        <div class="milestone-item">
+          <div class="ms-status ms-on-track">✓</div>
+          <div class="ms-content">
+            <div class="ms-name">Lifting Volume</div>
+            <div class="ms-detail">7 MSK sessions logged — on pace for 12+ this month</div>
+          </div>
+          <div class="ms-progress">
+            <div class="ms-pct" style="color:var(--green)">78%</div>
+            <div class="ms-bar-mini"><div class="ms-fill-mini" style="width:78%"></div></div>
+          </div>
+        </div>
+        <div class="milestone-item">
+          <div class="ms-status ms-on-track">✓</div>
+          <div class="ms-content">
+            <div class="ms-name">Body Weight</div>
+            <div class="ms-detail">154.2 lbs → target 155–156 by Mar 1</div>
+          </div>
+          <div class="ms-progress">
+            <div class="ms-pct" style="color:var(--green)">85%</div>
+            <div class="ms-bar-mini"><div class="ms-fill-mini" style="width:85%"></div></div>
+          </div>
+        </div>
+        <div class="milestone-item">
+          <div class="ms-status ms-off-track">✕</div>
+          <div class="ms-content">
+            <div class="ms-name">Combat Training Volume</div>
+            <div class="ms-detail">Only 1 boxing session in Feb — target 6–8 sessions/month</div>
+          </div>
+          <div class="ms-progress">
+            <div class="ms-pct" style="color:var(--red)">13%</div>
+            <div class="ms-bar-mini"><div class="ms-fill-mini" style="width:13%;background:var(--red)"></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quarterly View -->
+    <div id="goal-quarterly" style="display:none">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+        <div class="milestone-card">
+          <div class="card-label" style="margin-bottom:16px">Q1 2026 Targets — by Apr 1</div>
+          <div class="milestone-item">
+            <div class="ms-status ms-at-risk">△</div>
+            <div class="ms-content">
+              <div class="ms-name">HRV → 55ms avg</div>
+              <div class="ms-detail">From 45.1ms current. Requires consistent 7h+ sleep + training regularity</div>
+            </div>
+            <div class="ms-progress">
+              <div class="ms-pct" style="color:var(--yellow)">58%</div>
+              <div class="ms-bar-mini"><div class="ms-fill-mini" style="width:58%;background:var(--yellow)"></div></div>
+            </div>
+          </div>
+          <div class="milestone-item">
+            <div class="ms-status ms-on-track">✓</div>
+            <div class="ms-content">
+              <div class="ms-name">Weight → 158 lbs</div>
+              <div class="ms-detail">3.8 lbs to go — achievable with progressive overload</div>
+            </div>
+            <div class="ms-progress">
+              <div class="ms-pct" style="color:var(--green)">74%</div>
+              <div class="ms-bar-mini"><div class="ms-fill-mini" style="width:74%"></div></div>
+            </div>
+          </div>
+          <div class="milestone-item">
+            <div class="ms-status ms-on-track">✓</div>
+            <div class="ms-content">
+              <div class="ms-name">BF% → 17.5%</div>
+              <div class="ms-detail">1.2 pp to drop — on track with current recomp</div>
+            </div>
+            <div class="ms-progress">
+              <div class="ms-pct" style="color:var(--green)">70%</div>
+              <div class="ms-bar-mini"><div class="ms-fill-mini" style="width:70%"></div></div>
+            </div>
+          </div>
+          <div class="milestone-item">
+            <div class="ms-status ms-at-risk">△</div>
+            <div class="ms-content">
+              <div class="ms-name">Combat Training → 8 sessions/mo</div>
+              <div class="ms-detail">Feb collapsed to 1 session. Reinstate consistent boxing</div>
+            </div>
+            <div class="ms-progress">
+              <div class="ms-pct" style="color:var(--yellow)">25%</div>
+              <div class="ms-bar-mini"><div class="ms-fill-mini" style="width:25%;background:var(--yellow)"></div></div>
+            </div>
+          </div>
+        </div>
+        <div class="milestone-card">
+          <div class="card-label" style="margin-bottom:16px">Q2 2026 Targets — by Jul 1</div>
+          <div class="milestone-item">
+            <div class="ms-status ms-on-track" style="opacity:0.5">◌</div>
+            <div class="ms-content">
+              <div class="ms-name">HRV → 65ms avg</div>
+              <div class="ms-detail">Return to Feb/Mar 2025 baseline levels</div>
+            </div>
+            <div class="ms-progress">
+              <div class="ms-pct" style="color:var(--text3)">—</div>
+              <div class="ms-bar-mini"><div class="ms-fill-mini" style="width:45%"></div></div>
+            </div>
+          </div>
+          <div class="milestone-item">
+            <div class="ms-status ms-on-track" style="opacity:0.5">◌</div>
+            <div class="ms-content">
+              <div class="ms-name">Weight → 161 lbs</div>
+              <div class="ms-detail">Near goal weight — focus shifts to composition</div>
+            </div>
+            <div class="ms-progress">
+              <div class="ms-pct" style="color:var(--text3)">—</div>
+              <div class="ms-bar-mini"><div class="ms-fill-mini" style="width:64%"></div></div>
+            </div>
+          </div>
+          <div class="milestone-item">
+            <div class="ms-status ms-on-track" style="opacity:0.5">◌</div>
+            <div class="ms-content">
+              <div class="ms-name">Muscle → 35.5kg</div>
+              <div class="ms-detail">+2.5kg from current 33kg — progressive lifting required</div>
+            </div>
+            <div class="ms-progress">
+              <div class="ms-pct" style="color:var(--text3)">—</div>
+              <div class="ms-bar-mini"><div class="ms-fill-mini" style="width:28%"></div></div>
+            </div>
+          </div>
+          <div class="milestone-item">
+            <div class="ms-status ms-on-track" style="opacity:0.5">◌</div>
+            <div class="ms-content">
+              <div class="ms-name">BF% → 16%</div>
+              <div class="ms-detail">Aiming for peak summer composition</div>
+            </div>
+            <div class="ms-progress">
+              <div class="ms-pct" style="color:var(--text3)">—</div>
+              <div class="ms-bar-mini"><div class="ms-fill-mini" style="width:52%"></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Annual View -->
+    <div id="goal-annual" style="display:none">
+      <div class="milestone-card">
+        <div class="card-label" style="margin-bottom:16px">Annual Vision — End of 2026</div>
+        <div class="milestone-item">
+          <div class="ms-status ms-on-track" style="opacity:0.6">◌</div>
+          <div class="ms-content">
+            <div class="ms-name">Weight: 162 lbs (+7.8 lbs to go)</div>
+            <div class="ms-detail">At current trajectory: ~1–1.5 lbs/month lean mass gain = achievable by Q4</div>
+          </div>
+          <div class="ms-progress">
+            <div class="ms-pct">59%</div>
+            <div class="ms-bar-mini"><div class="ms-fill-mini" style="width:59%"></div></div>
+          </div>
+        </div>
+        <div class="milestone-item">
+          <div class="ms-status ms-on-track" style="opacity:0.6">◌</div>
+          <div class="ms-content">
+            <div class="ms-name">Body Fat: 15% (-3.7pp to go)</div>
+            <div class="ms-detail">Simultaneous recomp pace: approximately 1pp per 6–8 weeks</div>
+          </div>
+          <div class="ms-progress">
+            <div class="ms-pct">68%</div>
+            <div class="ms-bar-mini"><div class="ms-fill-mini" style="width:68%"></div></div>
+          </div>
+        </div>
+        <div class="milestone-item">
+          <div class="ms-status ms-on-track" style="opacity:0.6">◌</div>
+          <div class="ms-content">
+            <div class="ms-name">Skeletal Muscle: 38kg (+5kg to go)</div>
+            <div class="ms-detail">Natural ceiling pace ~0.5–1kg/month with optimal training and recovery</div>
+          </div>
+          <div class="ms-progress">
+            <div class="ms-pct">28%</div>
+            <div class="ms-bar-mini"><div class="ms-fill-mini" style="width:28%"></div></div>
+          </div>
+        </div>
+        <div class="milestone-item">
+          <div class="ms-status ms-on-track" style="opacity:0.6">◌</div>
+          <div class="ms-content">
+            <div class="ms-name">HRV: 60ms avg</div>
+            <div class="ms-detail">Return to and surpass Feb 2025 baseline. Requires stress management + sleep discipline</div>
+          </div>
+          <div class="ms-progress">
+            <div class="ms-pct">57%</div>
+            <div class="ms-bar-mini"><div class="ms-fill-mini" style="width:57%"></div></div>
+          </div>
+        </div>
+        <div class="milestone-item">
+          <div class="ms-status ms-on-track" style="opacity:0.6">◌</div>
+          <div class="ms-content">
+            <div class="ms-name">InBody Score: 95 (+13 points)</div>
+            <div class="ms-detail">Follows body composition improvements — should track automatically</div>
+          </div>
+          <div class="ms-progress">
+            <div class="ms-pct">82%</div>
+            <div class="ms-bar-mini"><div class="ms-fill-mini" style="width:82%"></div></div>
+          </div>
+        </div>
+        <div class="milestone-item">
+          <div class="ms-status ms-at-risk" style="opacity:0.6">△</div>
+          <div class="ms-content">
+            <div class="ms-name">Homocysteine: &lt;10 µmol/L</div>
+            <div class="ms-detail">Currently 14.4 µmol/L. MTHFR C677T requires methylfolate + B12 protocol. 3–6 months to see change.</div>
+          </div>
+          <div class="ms-progress">
+            <div class="ms-pct" style="color:var(--yellow)">40%</div>
+            <div class="ms-bar-mini"><div class="ms-fill-mini" style="width:40%;background:var(--yellow)"></div></div>
+          </div>
+        </div>
+      </div>
+      <div class="insight-banner" style="margin-top:16px">
+        The annual trajectory is sound. You've already proven the hardest thing — simultaneous recomp. The 2026 challenge is HRV recovery and breaking through the Jan/Sep crash pattern. Sep 2025 and Jan 2026 both showed the same signature: accumulated load → abrupt drop → slow rebuild. Build planned deload weeks into Aug and Dec to break the cycle.
+      </div>
+    </div>
+
+  </div>
+
+</div>
+</div>
+
+<div class="tooltip" id="tooltip"></div>
+
+<script>
+// ══════════════════════════════════════
+// DATA
+// ══════════════════════════════════════
+const DATA = {
+  today: {date:'2026-02-18',recovery:51,hrv:48.2,rhr:66,spo2:96.5,skin_temp:34.3,
+    sleep_hrs:7.2,sleep_efficiency:85,sleep_performance:88,rem_hrs:1.4,deep_hrs:1.1,
+    light_hrs:3.8,awake_hrs:0.9,respiratory_rate:15.3},
+  body_comp: {weight_lbs:154.2,bf_pct:18.7,muscle_kg:33.0,inbody_score:82,
+    bmr_kcal:1648,visceral_fat:5,weight_goal:162,bf_goal:15.0,muscle_goal:38.0,inbody_goal:95},
+  baselines: {hrv_personal_best_avg:75.6,hrv_personal_peak:105.8,hrv_7d_avg:43.5,
+    recovery_best_month_pct:68,hrv_goal:60.0},
+  monthly: [
+    {month:'Jan 25',avg_recovery:55.5,avg_hrv:59.1,avg_strain:12.0,green:7,yellow:8,red:4,green_pct:37},
+    {month:'Feb 25',avg_recovery:71.9,avg_hrv:72.8,avg_strain:10.6,green:17,yellow:11,red:0,green_pct:61},
+    {month:'Mar 25',avg_recovery:64.7,avg_hrv:71.6,avg_strain:9.7,green:17,yellow:13,red:1,green_pct:55},
+    {month:'Apr 25',avg_recovery:67.6,avg_hrv:67.4,avg_strain:9.2,green:14,yellow:16,red:0,green_pct:47},
+    {month:'May 25',avg_recovery:61.3,avg_hrv:62.8,avg_strain:9.3,green:13,yellow:16,red:2,green_pct:42},
+    {month:'Jun 25',avg_recovery:61.1,avg_hrv:64.5,avg_strain:11.2,green:16,yellow:11,red:3,green_pct:53},
+    {month:'Jul 25',avg_recovery:51.8,avg_hrv:49.9,avg_strain:11.2,green:7,yellow:18,red:6,green_pct:23},
+    {month:'Aug 25',avg_recovery:71.1,avg_hrv:75.6,avg_strain:11.9,green:21,yellow:9,red:1,green_pct:68},
+    {month:'Sep 25',avg_recovery:44.5,avg_hrv:58.5,avg_strain:8.9,green:4,yellow:16,red:10,green_pct:13},
+    {month:'Oct 25',avg_recovery:62.5,avg_hrv:57.7,avg_strain:10.7,green:15,yellow:13,red:3,green_pct:48},
+    {month:'Nov 25',avg_recovery:61.3,avg_hrv:56.2,avg_strain:10.2,green:14,yellow:13,red:3,green_pct:47},
+    {month:'Dec 25',avg_recovery:66.1,avg_hrv:67.2,avg_strain:9.6,green:19,yellow:10,red:2,green_pct:61},
+    {month:'Jan 26',avg_recovery:45.4,avg_hrv:48.5,avg_strain:9.4,green:4,yellow:17,red:8,green_pct:14},
+    {month:'Feb 26',avg_recovery:52.3,avg_hrv:45.1,avg_strain:9.0,green:5,yellow:8,red:5,green_pct:28}
+  ],
+  monthly_training: [
+    {month:'Jan 25',lifting:14,combat:0,cardio:13,recovery:0},
+    {month:'Feb 25',lifting:21,combat:0,cardio:4,recovery:0},
+    {month:'Mar 25',lifting:18,combat:0,cardio:6,recovery:0},
+    {month:'Apr 25',lifting:15,combat:0,cardio:5,recovery:9},
+    {month:'May 25',lifting:13,combat:5,cardio:2,recovery:16},
+    {month:'Jun 25',lifting:16,combat:10,cardio:3,recovery:4},
+    {month:'Jul 25',lifting:17,combat:8,cardio:0,recovery:3},
+    {month:'Aug 25',lifting:16,combat:14,cardio:2,recovery:2},
+    {month:'Sep 25',lifting:12,combat:0,cardio:5,recovery:0},
+    {month:'Oct 25',lifting:14,combat:7,cardio:5,recovery:4},
+    {month:'Nov 25',lifting:9,combat:9,cardio:1,recovery:3},
+    {month:'Dec 25',lifting:5,combat:7,cardio:2,recovery:2},
+    {month:'Jan 26',lifting:4,combat:7,cardio:5,recovery:2},
+    {month:'Feb 26',lifting:7,combat:1,cardio:2,recovery:2}
+  ],
+  trend_30: [
+    {date:'2026-01-20',recovery:27,hrv:38.5},{date:'2026-01-21',recovery:35,hrv:40.1},
+    {date:'2026-01-22',recovery:52,hrv:45.2},{date:'2026-01-23',recovery:79,hrv:55.8},
+    {date:'2026-01-24',recovery:61,hrv:50.3},{date:'2026-01-25',recovery:52,hrv:47.1},
+    {date:'2026-01-26',recovery:35,hrv:40.2},{date:'2026-01-27',recovery:44,hrv:43.5},
+    {date:'2026-01-28',recovery:45,hrv:44.1},{date:'2026-01-29',recovery:50,hrv:46.3},
+    {date:'2026-01-30',recovery:40,hrv:41.8},{date:'2026-01-31',recovery:38,hrv:40.5},
+    {date:'2026-02-01',recovery:55,hrv:47.2},{date:'2026-02-02',recovery:68,hrv:52.1},
+    {date:'2026-02-03',recovery:63,hrv:49.8},{date:'2026-02-04',recovery:63,hrv:44.0},
+    {date:'2026-02-05',recovery:50,hrv:43.2},{date:'2026-02-06',recovery:76,hrv:52.8},
+    {date:'2026-02-07',recovery:75,hrv:52.0},{date:'2026-02-08',recovery:50,hrv:44.5},
+    {date:'2026-02-09',recovery:42,hrv:41.2},{date:'2026-02-10',recovery:55,hrv:46.8},
+    {date:'2026-02-11',recovery:42,hrv:41.4},{date:'2026-02-12',recovery:22,hrv:28.7},
+    {date:'2026-02-13',recovery:31,hrv:35.4},{date:'2026-02-14',recovery:61,hrv:46.2},
+    {date:'2026-02-15',recovery:55,hrv:47.1},{date:'2026-02-16',recovery:76,hrv:53.6},
+    {date:'2026-02-17',recovery:43,hrv:42.8},{date:'2026-02-18',recovery:51,hrv:48.2}
+  ],
+  lift_history: [
+    {date:'2026-02-16',sport:'weightlifting_msk',strain:14.4,duration_min:70,avg_hr:123,max_hr:164,kj:1692,z1_min:44,z2_min:9,z3_min:2,z4_min:0,z5_min:0,recovery_in:76,hrv_in:53.6},
+    {date:'2026-02-13',sport:'weightlifting_msk',strain:13.0,duration_min:95,avg_hr:117,max_hr:149,kj:1695,z1_min:64,z2_min:1,z3_min:0,z4_min:0,z5_min:0,recovery_in:31,hrv_in:35.4},
+    {date:'2026-02-12',sport:'weightlifting_msk',strain:9.5,duration_min:87,avg_hr:109,max_hr:161,kj:1026,z1_min:30,z2_min:2,z3_min:0,z4_min:0,z5_min:0,recovery_in:22,hrv_in:28.7},
+    {date:'2026-02-11',sport:'weightlifting_msk',strain:18.1,duration_min:95,avg_hr:128,max_hr:181,kj:2687,z1_min:45,z2_min:8,z3_min:5,z4_min:2,z5_min:0,recovery_in:42,hrv_in:41.4},
+    {date:'2026-02-07',sport:'weightlifting_msk',strain:11.9,duration_min:101,avg_hr:98,max_hr:130,kj:629,z1_min:55,z2_min:3,z3_min:0,z4_min:0,z5_min:0,recovery_in:75,hrv_in:52.0},
+    {date:'2026-02-06',sport:'weightlifting_msk',strain:11.0,duration_min:72,avg_hr:102,max_hr:146,kj:585,z1_min:38,z2_min:4,z3_min:0,z4_min:0,z5_min:0,recovery_in:76,hrv_in:52.8},
+    {date:'2026-02-04',sport:'weightlifting_msk',strain:16.5,duration_min:73,avg_hr:116,max_hr:160,kj:1278,z1_min:30,z2_min:12,z3_min:0,z4_min:0,z5_min:0,recovery_in:63,hrv_in:44.0},
+    {date:'2026-01-26',sport:'weightlifting_msk',strain:15.4,duration_min:50,avg_hr:128,max_hr:165,kj:1523,z1_min:26,z2_min:8,z3_min:3,z4_min:0,z5_min:0,recovery_in:35,hrv_in:40.2},
+    {date:'2026-01-06',sport:'weightlifting_msk',strain:10.6,duration_min:60,avg_hr:101,max_hr:141,kj:595,z1_min:32,z2_min:6,z3_min:0,z4_min:0,z5_min:0,recovery_in:90,hrv_in:77.0},
+    {date:'2025-12-30',sport:'weightlifting_msk',strain:13.8,duration_min:68,avg_hr:115,max_hr:158,kj:1102,z1_min:36,z2_min:10,z3_min:2,z4_min:0,z5_min:0,recovery_in:68,hrv_in:58.2}
+  ],
+  combat_history: [
+    {date:'2026-02-17',sport:'boxing',strain:11.5,duration_min:34,avg_hr:148,max_hr:175,kj:890,z4_min:7,z5_min:2,recovery_in:43,hrv_in:42.8},
+    {date:'2026-01-30',sport:'boxing',strain:16.5,duration_min:60,avg_hr:160,max_hr:185,kj:1580,z4_min:20,z5_min:10,recovery_in:40,hrv_in:41.8},
+    {date:'2026-01-28',sport:'boxing',strain:17.6,duration_min:58,avg_hr:162,max_hr:188,kj:1620,z4_min:15,z5_min:28,recovery_in:45,hrv_in:44.1},
+    {date:'2026-01-25',sport:'boxing',strain:15.9,duration_min:81,avg_hr:152,max_hr:182,kj:1490,z4_min:14,z5_min:3,recovery_in:52,hrv_in:47.1},
+    {date:'2026-01-23',sport:'boxing',strain:16.0,duration_min:72,avg_hr:155,max_hr:183,kj:1510,z4_min:20,z5_min:5,recovery_in:79,hrv_in:55.8}
+  ]
+};
+
+// ══════════════════════════════════════
+// NAV
+// ══════════════════════════════════════
+function switchView(id, btn) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  btn.classList.add('active');
+}
+
+// ══════════════════════════════════════
+// AI INTELLIGENCE ENGINE
+// ══════════════════════════════════════
+function computeAI(data) {
+  const rec = data.today.recovery;
+  const hrv = data.today.hrv;
+  const rhr = data.today.rhr;
+  const hvBaseline = data.baselines.hrv_7d_avg;
+  const hvBest = data.baselines.hrv_personal_best_avg;
+  const sleep = data.today.sleep_hrs;
+  const deep = data.today.deep_hrs;
+  const rem = data.today.rem_hrs;
+
+  // Assess HRV position
+  const hrvPct = (hrv / hvBest) * 100;
+  const hrvTrend = hrv > hvBaseline ? 'rising' : hrv < hvBaseline ? 'falling' : 'stable';
+
+  // Sleep quality
+  const sleepScore = data.today.sleep_performance;
+  const sleepNeed = sleepScore < 85 ? (8.0 - sleep).toFixed(1) : null;
+
+  // Training recommendation
+  let strainTarget, calTarget, verdict, targetLabel;
+
+  if (rec >= 67) {
+    strainTarget = '14–18';
+    calTarget = Math.round(data.body_comp.bmr_kcal * 1.6);
+    verdict = `Green zone today — your body is ready. With HRV at ${hrv}ms (${hrvTrend} vs your 7d avg of ${hvBaseline}ms), you have capacity for a high-output lifting session. Push compound movements and don't leave reps in the tank.`;
+    targetLabel = 'PUSH';
+  } else if (rec >= 34) {
+    strainTarget = '10–14';
+    calTarget = Math.round(data.body_comp.bmr_kcal * 1.4);
+    if (hrv < hvBaseline * 0.85) {
+      verdict = `Yellow zone with suppressed HRV at ${hrv}ms — ${Math.round(hvBaseline - hrv)}ms below your recent average. Your nervous system is still recovering. Train, but with intention: moderate lifting, avoid max effort. Quality over volume today.`;
+    } else {
+      verdict = `Yellow zone, but HRV is holding near baseline at ${hrv}ms. You can train productively — aim for moderate strain with full range of motion work. Avoid testing maxes. Use today to build volume, not intensity.`;
+    }
+    targetLabel = 'MODERATE';
+  } else {
+    strainTarget = '4–8';
+    calTarget = Math.round(data.body_comp.bmr_kcal * 1.2);
+    verdict = `Red zone — recovery first. HRV at ${hrv}ms is ${Math.round(hvBest - hrv)}ms below your personal best average. A forced hard session today will extend the hole you're in. Walk, stretch, sleep earlier tonight.`;
+    targetLabel = 'RECOVER';
+  }
+
+  return { strainTarget, calTarget, verdict, targetLabel, sleepNeed, hrvTrend, sleepScore };
+}
+
+// ══════════════════════════════════════
+// RENDER COMMAND CENTER
+// ══════════════════════════════════════
+function renderCommandCenter() {
+  const d = DATA;
+  const t = d.today;
+  const ai = computeAI(d);
+
+  // Date
+  document.getElementById('dateDisplay').textContent = 'Feb 18, 2026';
+
+  // Recovery score color
+  const recEl = document.getElementById('recScore');
+  const zoneEl = document.getElementById('recZone');
+  const recZone = t.recovery >= 67 ? 'green' : t.recovery < 34 ? 'red' : 'yellow';
+  recEl.className = `score-big ${recZone}`;
+  zoneEl.className = `score-zone ${recZone}`;
+  zoneEl.textContent = t.recovery >= 67 ? 'Green Zone' : t.recovery < 34 ? 'Red Zone' : 'Yellow Zone';
+
+  // Biometrics
+  document.getElementById('todayHrv').innerHTML = `${t.hrv}<span style="font-size:12px;color:var(--text3)">ms</span>`;
+  document.getElementById('todayRhr').innerHTML = `${t.rhr}<span style="font-size:12px;color:var(--text3)">bpm</span>`;
+  document.getElementById('todaySpo2').innerHTML = `${t.spo2}<span style="font-size:12px;color:var(--text3)">%</span>`;
+
+  // Recovery insight
+  const hvPct = Math.round((t.hrv / d.baselines.hrv_personal_best_avg) * 100);
+  document.getElementById('recInsight').textContent =
+    `HRV is ${hvPct}% of your personal best avg (${d.baselines.hrv_personal_best_avg}ms). You're ${Math.round(d.baselines.hrv_personal_best_avg - t.hrv)}ms from peak — the rebuild is in progress.`;
+
+  // AI Brief
+  document.getElementById('aiVerdict').textContent = ai.verdict;
+  const targetsEl = document.getElementById('aiTargets');
+  const urgency = t.recovery < 34 ? 'caution' : t.recovery < 67 ? 'warn' : '';
+  targetsEl.innerHTML = `
+    <div class="ai-target-row ${urgency}">
+      <div class="ai-target-label">Strain Target</div>
+      <div class="ai-target-val">${ai.strainTarget} · ${ai.targetLabel}</div>
+    </div>
+    <div class="ai-target-row">
+      <div class="ai-target-label">Calorie Target</div>
+      <div class="ai-target-val">${ai.calTarget.toLocaleString()} kcal</div>
+    </div>
+    <div class="ai-target-row ${ai.sleepNeed ? 'warn' : ''}">
+      <div class="ai-target-label">Sleep Tonight</div>
+      <div class="ai-target-val">${ai.sleepNeed ? `Aim for ${(parseFloat(ai.sleepNeed) + t.sleep_hrs).toFixed(1)}h+ (recover ${ai.sleepNeed}h debt)` : '7.5h+ · maintain'}</div>
+    </div>
+  `;
+
+  // Sleep
+  document.getElementById('sleepTotal').innerHTML = `${t.sleep_hrs}<span style="font-size:16px;color:var(--text3)">h</span>`;
+  document.getElementById('sleepPerf').textContent = `${t.sleep_performance}%`;
+  document.getElementById('sleepPerfBar').style.width = `${t.sleep_performance}%`;
+  document.getElementById('sleepEff').textContent = `${t.sleep_efficiency}%`;
+  document.getElementById('sleepResp').textContent = `${t.respiratory_rate}`;
+  const needVal = t.sleep_performance < 85 ? `${(7.5 - t.sleep_hrs).toFixed(1)}h` : 'On track';
+  document.getElementById('sleepNeed').textContent = needVal;
+
+  const stages = document.getElementById('sleepStages');
+  const totalH = t.sleep_hrs;
+  const stageData = [
+    {name:'REM', hrs: t.rem_hrs, color:'#a78bfa'},
+    {name:'Deep', hrs: t.deep_hrs, color:'#4da6ff'},
+    {name:'Light', hrs: t.light_hrs || (totalH - t.rem_hrs - t.deep_hrs - (t.awake_hrs||0.5)), color:'#00e5a0'},
+    {name:'Awake', hrs: t.awake_hrs || 0.5, color:'#4a5c6e'}
+  ];
+  stages.innerHTML = stageData.map(s => `
+    <div class="stage-row">
+      <div class="stage-dot" style="background:${s.color}"></div>
+      <div style="font-size:10px;color:var(--text3);width:36px">${s.name}</div>
+      <div class="stage-bar-wrap">
+        <div class="stage-bar" style="width:${Math.min((s.hrs/totalH)*100,100)}%;background:${s.color}"></div>
+      </div>
+      <div class="stage-lbl">${s.hrs.toFixed(1)}h</div>
+    </div>
+  `).join('');
+
+  // Body comp goals
+  const bc = d.body_comp;
+  const compGoals = [
+    {name:'Weight', cur: bc.weight_lbs, goal: bc.weight_goal, unit:'lbs', start:139, higher:true},
+    {name:'Body Fat', cur: bc.bf_pct, goal: bc.bf_goal, unit:'%', start:26, higher:false},
+    {name:'Muscle', cur: bc.muscle_kg, goal: bc.muscle_goal, unit:'kg', start:31.1, higher:true},
+    {name:'InBody', cur: bc.inbody_score, goal: bc.inbody_goal, unit:'', start:60, higher:true}
+  ];
+  const barsEl = document.getElementById('compGoalBars');
+  barsEl.innerHTML = compGoals.map(g => {
+    const pct = higher => higher
+      ? Math.min(((g.cur - g.start) / (g.goal - g.start)) * 100, 100)
+      : Math.min(((g.start - g.cur) / (g.start - g.goal)) * 100, 100);
+    const p = pct(g.higher);
+    return `<div class="goal-item">
+      <div class="goal-header">
+        <div class="goal-name">${g.name}</div>
+        <div class="goal-nums">${g.cur}${g.unit} <span class="goal-num-target">/ ${g.goal}${g.unit}</span></div>
+      </div>
+      <div class="goal-track"><div class="goal-fill" style="width:${p}%"></div></div>
+    </div>`;
+  }).join('');
+
+  // Biometrics grid
+  const bioData = [
+    {val:`${t.rhr}`, unit:'bpm', lbl:'RHR', delta:''},
+    {val:`${t.hrv}`, unit:'ms', lbl:'HRV (today)', delta:''},
+    {val:`${d.baselines.hrv_7d_avg}`, unit:'ms', lbl:'HRV 7d avg', delta:''},
+    {val:`${t.spo2}`, unit:'%', lbl:'SpO₂', delta:''},
+    {val:`${t.skin_temp}`, unit:'°C', lbl:'Skin Temp', delta:''},
+    {val:`${t.respiratory_rate}`, unit:'brpm', lbl:'Resp Rate', delta:''}
+  ];
+  document.getElementById('bioGrid').innerHTML = bioData.map(b => `
+    <div class="bio-item">
+      <div class="bio-val">${b.val}<span style="font-size:10px;color:var(--text3);font-family:'DM Mono'">${b.unit}</span></div>
+      <div class="bio-lbl">${b.lbl}</div>
+    </div>
+  `).join('');
+
+  // Calorie target
+  document.getElementById('calTarget').textContent = ai.calTarget.toLocaleString();
+
+  // 30-day sparklines
+  renderSparkline('recoverySparkline', d.trend_30.map(t => ({v: t.recovery, d: t.date})),
+    v => v >= 67 ? 'var(--green)' : v >= 34 ? 'var(--yellow)' : 'var(--red)');
+  renderSparkline('hrvSparkline', d.trend_30.map(t => ({v: t.hrv, d: t.date})),
+    v => `var(--blue)`, true);
+
+  // 7d averages
+  const last7 = d.trend_30.slice(-7);
+  const avg7rec = Math.round(last7.filter(x=>x.recovery).reduce((a,b)=>a+b.recovery,0)/last7.filter(x=>x.recovery).length);
+  const avg7hrv = (last7.filter(x=>x.hrv).reduce((a,b)=>a+b.hrv,0)/last7.filter(x=>x.hrv).length).toFixed(1);
+  document.getElementById('avgRec7d').textContent = avg7rec + '%';
+  document.getElementById('avgHrv7d').textContent = avg7hrv + 'ms';
+  document.getElementById('currentHrv').textContent = t.hrv;
+
+  // Recent workouts
+  const allWk = [...DATA.lift_history.slice(0,4), ...DATA.combat_history.slice(0,2)]
+    .sort((a,b) => b.date.localeCompare(a.date)).slice(0,5);
+  const wkEl = document.getElementById('recentWorkouts');
+  wkEl.innerHTML = allWk.map(w => {
+    const isCombat = ['boxing','kickboxing','muay-thai'].includes(w.sport);
+    const icon = isCombat ? '🥊' : '🏋️';
+    const bg = isCombat ? 'rgba(255,77,109,0.1)' : 'rgba(77,166,255,0.1)';
+    const strainColor = w.strain >= 16 ? 'var(--red)' : w.strain >= 12 ? 'var(--yellow)' : 'var(--green)';
+    const name = isCombat ? w.sport.replace('-',' ') : 'MSK Lifting';
+    const dateF = new Date(w.date).toLocaleDateString('en-US',{month:'short',day:'numeric'});
+    return `<div class="wk-session">
+      <div class="wk-icon" style="background:${bg}">${icon}</div>
+      <div class="wk-meta">
+        <div class="wk-name">${name.charAt(0).toUpperCase()+name.slice(1)}</div>
+        <div class="wk-date">${dateF} · ${w.duration_min}min · Rec in: ${w.recovery_in ?? '—'}%</div>
+      </div>
+      <div class="wk-stats">
+        <div class="wk-strain" style="color:${strainColor}">${w.strain}</div>
+        <div class="wk-dur">${Math.round(w.kj)} kJ</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function renderSparkline(id, points, colorFn, line=false) {
+  const el = document.getElementById(id);
+  const vals = points.map(p => p.v).filter(v => v != null);
+  const mn = Math.min(...vals), mx = Math.max(...vals);
+  const rng = mx - mn || 1;
+  el.innerHTML = points.map(p => {
+    const pct = p.v != null ? ((p.v - mn) / rng) * 85 + 5 : 5;
+    const color = p.v != null ? colorFn(p.v) : 'var(--surface3)';
+    return `<div class="spark-bar" style="height:${pct}%;background:${color};opacity:${p.v?1:0.2}"
+      title="${p.d}: ${p.v ?? '—'}"></div>`;
+  }).join('');
+}
+
+// ══════════════════════════════════════
+// RENDER TRENDS
+// ══════════════════════════════════════
+function renderTrends() {
+  // HRV month chart (bar chart)
+  const hrvChart = document.getElementById('hrvMonthChart');
+  const months = DATA.monthly;
+  const maxHrv = Math.max(...months.map(m => m.avg_hrv));
+  hrvChart.innerHTML = `<div style="display:flex;gap:4px;align-items:flex-end;height:100%">
+    ${months.map(m => {
+      const h = (m.avg_hrv / maxHrv) * 100;
+      const color = m.avg_hrv > 65 ? 'var(--green)' : m.avg_hrv > 50 ? 'var(--yellow)' : 'var(--red)';
+      const isLow = ['Sep 25','Jan 26','Feb 26'].includes(m.month);
+      return `<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px">
+        <div style="font-size:8px;color:${color}">${Math.round(m.avg_hrv)}</div>
+        <div style="width:100%;height:${h}%;background:${color};border-radius:2px 2px 0 0;opacity:${isLow?1:0.7};${isLow?'box-shadow:0 0 8px '+color:''}" title="${m.month}: ${m.avg_hrv}ms"></div>
+        <div style="font-size:7px;color:var(--text3);writing-mode:vertical-rl;transform:rotate(180deg);height:28px;overflow:hidden">${m.month}</div>
+      </div>`;
+    }).join('')}
+  </div>`;
+
+  // Recovery zone stacked bar chart
+  const zoneEl = document.getElementById('zoneMonthChart');
+  zoneEl.innerHTML = months.map(m => {
+    const total = m.green + m.yellow + m.red;
+    const gH = total ? (m.green / total) * 100 : 0;
+    const yH = total ? (m.yellow / total) * 100 : 0;
+    const rH = total ? (m.red / total) * 100 : 0;
+    return `<div class="zone-col" title="${m.month}: ${m.green}G ${m.yellow}Y ${m.red}R">
+      <div class="zone-seg" style="height:${gH}%;background:var(--green);opacity:0.7"></div>
+      <div class="zone-seg" style="height:${yH}%;background:var(--yellow);opacity:0.7"></div>
+      <div class="zone-seg" style="height:${rH}%;background:var(--red);opacity:0.7"></div>
+      <div class="zone-month-lbl">${m.month.split(' ')[0]}</div>
+    </div>`;
+  }).join('');
+
+  // Training load stacked
+  const loadEl = document.getElementById('loadMonthChart');
+  const loadMonths = DATA.monthly_training;
+  const maxLoad = Math.max(...loadMonths.map(m => m.lifting + m.combat + m.cardio + m.recovery));
+  loadEl.innerHTML = loadMonths.map(m => {
+    const total = m.lifting + m.combat + m.cardio + m.recovery;
+    const scale = total / maxLoad * 100;
+    const lH = total ? (m.lifting / total) * scale : 0;
+    const cH = total ? (m.combat / total) * scale : 0;
+    const crH = total ? (m.cardio / total) * scale : 0;
+    const rH = total ? (m.recovery / total) * scale : 0;
+    return `<div style="flex:1;display:flex;flex-direction:column;align-items:center">
+      <div class="load-col" style="height:100%" title="${m.month}: ${m.lifting}L ${m.combat}C ${m.cardio}Cr ${m.recovery}R">
+        <div class="load-seg" style="height:${rH}%;background:var(--purple);opacity:0.7"></div>
+        <div class="load-seg" style="height:${crH}%;background:var(--green);opacity:0.7"></div>
+        <div class="load-seg" style="height:${cH}%;background:var(--red);opacity:0.7"></div>
+        <div class="load-seg" style="height:${lH}%;background:var(--blue);opacity:0.7"></div>
+      </div>
+      <div class="load-month-lbl">${m.month.split(' ')[0]}</div>
+    </div>`;
+  }).join('');
+}
+
+// ══════════════════════════════════════
+// RENDER WORKOUTS
+// ══════════════════════════════════════
+let selectedSessions = [];
+
+function renderWorkouts() {
+  renderSessionList('liftSessionList', DATA.lift_history, 'lift');
+  renderSessionList('combatSessionList', DATA.combat_history, 'combat');
+}
+
+function renderSessionList(elId, sessions, type) {
+  const el = document.getElementById(elId);
+  el.innerHTML = sessions.map((s, i) => {
+    const isCombat = type === 'combat';
+    const strainColor = s.strain >= 16 ? 'var(--red)' : s.strain >= 12 ? 'var(--yellow)' : 'var(--green)';
+    const recColor = !s.recovery_in ? 'var(--text3)' : s.recovery_in >= 67 ? 'var(--green)' : s.recovery_in >= 34 ? 'var(--yellow)' : 'var(--red)';
+    const dateF = new Date(s.date).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+    const maxZ = isCombat ? Math.max(s.z4_min||0, s.z5_min||0, 5) : Math.max(s.z1_min, s.z2_min, s.z3_min, s.z4_min, s.z5_min, 5);
+    const bars = isCombat
+      ? `<div class="zone-bars">
+          <div class="zone-bar" style="height:100%;flex:2;background:var(--green);opacity:0.3"></div>
+          <div class="zone-bar" style="height:100%;flex:2;background:var(--yellow);opacity:0.3"></div>
+          <div class="zone-bar" style="height:${((s.z4_min||0)/Math.max(s.z4_min+s.z5_min,1))*100}%;background:var(--red);opacity:0.7"></div>
+          <div class="zone-bar" style="height:${((s.z5_min||0)/Math.max(s.z4_min+s.z5_min,1))*100}%;background:var(--red)"></div>
+         </div>`
+      : `<div class="zone-bars">
+          <div class="zone-bar" style="height:${(s.z1_min/maxZ)*100}%;background:#4da6ff;opacity:0.5"></div>
+          <div class="zone-bar" style="height:${(s.z2_min/maxZ)*100}%;background:#00e5a0;opacity:0.6"></div>
+          <div class="zone-bar" style="height:${Math.max(s.z3_min/maxZ,0.1)*100}%;background:var(--yellow);opacity:0.7"></div>
+          <div class="zone-bar" style="height:${Math.max(s.z4_min/maxZ,0.05)*100}%;background:var(--red);opacity:0.8"></div>
+          <div class="zone-bar" style="height:${Math.max(s.z5_min/maxZ,0.05)*100}%;background:var(--red)"></div>
+         </div>`;
+    return `<div class="session-card" data-type="${type}" data-idx="${i}" onclick="selectSession(this,'${type}',${i})">
+      <div class="sc-header">
+        <div>
+          <div class="sc-date">${dateF}</div>
+          <div class="sc-sport">${s.sport.replace('_',' ')} · ${s.duration_min}min</div>
+          <div class="sc-rec-in" style="color:${recColor}">Recovery in: ${s.recovery_in ?? '—'}% · HRV: ${s.hrv_in?.toFixed?.(1) ?? '—'}ms</div>
+        </div>
+        <div class="sc-strain" style="color:${strainColor}">${s.strain}</div>
+      </div>
+      ${bars}
+      <div class="zone-labels"><span>Z1</span><span>Z2</span><span>Z3</span><span>Z4</span><span>Z5</span></div>
+    </div>`;
+  }).join('');
+}
+
+function selectSession(el, type, idx) {
+  // Remove previous selection of same type
+  document.querySelectorAll(`.session-card[data-type="${type}"]`).forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+
+  // Store
+  const existing = selectedSessions.findIndex(s => s.type === type);
+  if (existing >= 0) selectedSessions[existing] = { type, idx };
+  else selectedSessions.push({ type, idx });
+
+  if (selectedSessions.length >= 2 || (selectedSessions.length === 1)) {
+    renderComparison();
+  }
+}
+
+function renderComparison() {
+  const sessions = selectedSessions.map(s => {
+    return s.type === 'lift' ? DATA.lift_history[s.idx] : DATA.combat_history[s.idx];
+  });
+
+  if (sessions.length < 2) {
+    // Single session detail
+    const s = sessions[0];
+    const dateF = new Date(s.date).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+    const strainColor = s.strain >= 16 ? 'var(--red)' : s.strain >= 12 ? 'var(--yellow)' : 'var(--green)';
+    document.getElementById('compareSessions').innerHTML = `
+      <div class="cs-block" style="grid-column:span 3">
+        <div class="cs-label">${dateF} — ${s.sport}</div>
+        <div class="cs-metric"><span class="cs-metric-name">Strain</span><span class="cs-metric-val" style="color:${strainColor}">${s.strain}</span></div>
+        <div class="cs-metric"><span class="cs-metric-name">Duration</span><span class="cs-metric-val">${s.duration_min} min</span></div>
+        <div class="cs-metric"><span class="cs-metric-name">Avg HR</span><span class="cs-metric-val">${s.avg_hr ?? '—'} bpm</span></div>
+        <div class="cs-metric"><span class="cs-metric-name">Max HR</span><span class="cs-metric-val">${s.max_hr ?? '—'} bpm</span></div>
+        <div class="cs-metric"><span class="cs-metric-name">Energy</span><span class="cs-metric-val">${s.kj} kJ</span></div>
+        <div class="cs-metric"><span class="cs-metric-name">Recovery In</span><span class="cs-metric-val">${s.recovery_in ?? '—'}%</span></div>
+        <div class="cs-metric"><span class="cs-metric-name">HRV In</span><span class="cs-metric-val">${s.hrv_in?.toFixed?.(1) ?? '—'} ms</span></div>
+      </div>`;
+    document.getElementById('compareInsight').style.display = 'none';
+    return;
+  }
+
+  const [a, b] = sessions;
+  const strainDiff = (a.strain - b.strain).toFixed(1);
+  const strainDiffColor = parseFloat(strainDiff) > 0 ? 'var(--green)' : 'var(--red)';
+  const dateA = new Date(a.date).toLocaleDateString('en-US',{month:'short',day:'numeric'});
+  const dateB = new Date(b.date).toLocaleDateString('en-US',{month:'short',day:'numeric'});
+
+  const metricRow = (name, vA, vB, higherBetter=true, unit='') => {
+    const diff = parseFloat(vA) - parseFloat(vB);
+    const colorA = diff > 0 ? (higherBetter ? 'var(--green)' : 'var(--red)') : diff < 0 ? (higherBetter ? 'var(--red)' : 'var(--green)') : 'var(--text)';
+    return `<div class="cs-metric">
+      <span class="cs-metric-name">${name}</span>
+      <span class="cs-metric-val" style="color:${colorA}">${vA ?? '—'}${unit}</span>
+    </div>`;
+  };
+
+  document.getElementById('compareSessions').innerHTML = `
+    <div class="cs-block">
+      <div class="cs-label">${dateA} — Selected A</div>
+      ${metricRow('Strain', a.strain, b.strain)}
+      ${metricRow('Duration', a.duration_min, b.duration_min, true, 'min')}
+      ${metricRow('Avg HR', a.avg_hr??'—', b.avg_hr??'—', false, 'bpm')}
+      ${metricRow('Max HR', a.max_hr??'—', b.max_hr??'—', false, 'bpm')}
+      ${metricRow('Energy', a.kj, b.kj, true, 'kJ')}
+      ${metricRow('Recovery In', a.recovery_in??'—', b.recovery_in??'—', true, '%')}
+      ${metricRow('HRV In', a.hrv_in?.toFixed?.(1)??'—', b.hrv_in?.toFixed?.(1)??'—', true, 'ms')}
+    </div>
+    <div class="cs-vs">vs</div>
+    <div class="cs-block">
+      <div class="cs-label">${dateB} — Selected B</div>
+      ${metricRow('Strain', b.strain, a.strain)}
+      ${metricRow('Duration', b.duration_min, a.duration_min, true, 'min')}
+      ${metricRow('Avg HR', b.avg_hr??'—', a.avg_hr??'—', false, 'bpm')}
+      ${metricRow('Max HR', b.max_hr??'—', a.max_hr??'—', false, 'bpm')}
+      ${metricRow('Energy', b.kj, a.kj, true, 'kJ')}
+      ${metricRow('Recovery In', b.recovery_in??'—', a.recovery_in??'—', true, '%')}
+      ${metricRow('HRV In', b.hrv_in?.toFixed?.(1)??'—', a.hrv_in?.toFixed?.(1)??'—', true, 'ms')}
+    </div>`;
+
+  // AI Insight on comparison
+  let insight = '';
+  const recDiff = (a.recovery_in ?? 0) - (b.recovery_in ?? 0);
+  const strainNum = parseFloat(strainDiff);
+
+  if (Math.abs(strainNum) > 2) {
+    if (strainNum > 0 && recDiff < -10) {
+      insight = `Interesting: you hit higher strain on ${dateA} (${a.strain}) than ${dateB} (${b.strain}) despite going in with lower recovery (${a.recovery_in}% vs ${b.recovery_in}%). This is a high-performance signature — your body can output more than your recovery score predicts. Capitalize on this pattern by pushing slightly harder when you feel it, even in yellow zone.`;
+    } else if (strainNum > 0 && recDiff > 10) {
+      insight = `Higher recovery led to higher output — ${a.strain} strain on ${dateA} vs ${b.strain} on ${dateB}, with ${recDiff} percentage points better recovery going in. This confirms your readiness-to-output correlation. When recovery is green, push hard.`;
+    } else if (strainNum < 0 && recDiff > 10) {
+      insight = `You had significantly better recovery going into ${dateA} (${a.recovery_in}% vs ${b.recovery_in}%) but produced lower strain (${a.strain} vs ${b.strain}). This could reflect different training intentions — deload vs push — or that external factors (sleep quality, nutrition, stress) affected your output independent of WHOOP recovery score.`;
+    } else {
+      insight = `${Math.abs(strainNum)} point strain difference between sessions with similar recovery inputs. The variable is likely session intent, exercise selection, or progressive overload. Track whether kJ output (${a.kj} vs ${b.kj}) aligns with perceived effort.`;
+    }
+  } else {
+    insight = `Similar strain output across both sessions (${a.strain} vs ${b.strain}). Look at energy expenditure (${a.kj} vs ${b.kj} kJ) and zone distribution for quality differences — same strain can mean very different training stimuli.`;
+  }
+
+  document.getElementById('compareInsightText').textContent = insight;
+  document.getElementById('compareInsight').style.display = 'block';
+}
+
+// ══════════════════════════════════════
+// RENDER GOALS
+// ══════════════════════════════════════
+function renderGoals() {
+  // Weekly grid
+  const weekDays = [
+    {day:'MON',recovery:22,strain:18.1,color:'var(--red)'},
+    {day:'TUE',recovery:31,strain:13.0,color:'var(--red)'},
+    {day:'WED',recovery:61,strain:9.5,color:'var(--yellow)'},
+    {day:'THU',recovery:55,strain:4.2,color:'var(--yellow)'},
+    {day:'FRI',recovery:76,strain:14.4,color:'var(--green)'},
+    {day:'SAT',recovery:43,strain:11.5,color:'var(--yellow)'},
+    {day:'SUN',recovery:51,strain:4.2,color:'var(--yellow)'}
+  ];
+  document.getElementById('weeklyGrid').innerHTML = weekDays.map((d,i) => {
+    const isToday = i === 6;
+    return `<div class="day-cell ${isToday?'today':''}">
+      <div class="dc-day">${d.day}</div>
+      <div class="dc-rec" style="color:${d.color}">${d.recovery}</div>
+      <div class="dc-strain">${d.strain}</div>
+      <div class="dc-bar" style="background:${d.color};opacity:0.6;width:${d.recovery}%"></div>
+    </div>`;
+  }).join('');
+
+  // Week stats
+  const weekStrain = weekDays.reduce((a,b) => a + b.strain, 0).toFixed(1);
+  document.getElementById('weekStrain').textContent = weekStrain;
+  document.getElementById('weekStrainBar').style.width = Math.min((weekStrain / 70) * 100, 100) + '%';
+  const greenDays = weekDays.filter(d => d.recovery >= 67).length;
+  document.getElementById('weekGreenDays').textContent = greenDays;
+  document.getElementById('weekInsight').textContent = `${greenDays} green day${greenDays !== 1 ? 's' : ''} this week. ` +
+    (greenDays < 2 ? 'Recovery has been suppressed — prioritize sleep and dial back intensity through weekend.' :
+    greenDays >= 4 ? 'Excellent recovery week. You\'re primed to push hard next Monday.' :
+    'Moderate week. Aim for 3+ green days next week with consistent 7.5h+ sleep.');
+  const sleepAvg = (7.2).toFixed(1);
+  document.getElementById('weekSleepAvg').textContent = sleepAvg + 'h';
+}
+
+function switchGoalView(id, btn) {
+  ['weekly','monthly','quarterly','annual'].forEach(v => {
+    document.getElementById(`goal-${v}`).style.display = v === id ? 'block' : 'none';
+  });
+  document.querySelectorAll('.tf-tab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+// ══════════════════════════════════════
+// SYNC
+// ══════════════════════════════════════
+async function syncNow() {
+  const btn = document.getElementById('syncLabel');
+  const dot = document.getElementById('syncDot');
+  btn.textContent = 'Syncing...';
+  dot.style.background = 'var(--yellow)';
+  // Simulate sync — in real deployment this calls the WHOOP fetcher
+  await new Promise(r => setTimeout(r, 1500));
+  btn.textContent = 'Live';
+  dot.style.background = 'var(--green)';
+}
+
+// ══════════════════════════════════════
+// INIT
+// ══════════════════════════════════════
+function init() {
+  const now = new Date();
+  document.getElementById('dateDisplay').textContent =
+    now.toLocaleDateString('en-US', {weekday:'short', month:'short', day:'numeric', year:'numeric'});
+  renderCommandCenter();
+  renderTrends();
+  renderWorkouts();
+  renderGoals();
+}
+
+init();
+</script>
+</body>
+</html>
