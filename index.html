@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Health Intelligence</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app">
+        <!-- Sidebar -->
+        <nav class="sidebar">
+            <div class="sidebar-brand">
+                <div class="brand-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
+                    </svg>
+                </div>
+                <div class="brand-text">
+                    <span class="brand-name">Health Intelligence</span>
+                    <span class="user-name">Luis Alvarado</span>
+                </div>
+            </div>
+            <ul class="nav-links">
+                <li class="nav-item active" data-section="overview">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+                    <span>Overview</span>
+                </li>
+                <li class="nav-item" data-section="body">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="5" r="3"/><path d="M12 8v8m-4-6h8m-7 6l-2 4m5-4l2 4"/></svg>
+                    <span>Body</span>
+                </li>
+                <li class="nav-item" data-section="nutrition">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M18 8h1a4 4 0 010 8h-1M2 8h16v9a4 4 0 01-4 4H6a4 4 0 01-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>
+                    <span>Nutrition</span>
+                </li>
+                <li class="nav-item" data-section="recovery">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+                    <span>Recovery</span>
+                </li>
+                <li class="nav-item" data-section="sleep">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+                    <span>Sleep</span>
+                </li>
+                <li class="nav-item" data-section="strain">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                    <span>Strain</span>
+                </li>
+                <li class="nav-item" data-section="goals">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
+                    <span>Goals</span>
+                </li>
+            </ul>
+            <div class="sidebar-footer">
+                <div class="nav-item" id="settings-btn">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+                    <span>Settings</span>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="header">
+                <div class="header-left">
+                    <h1 class="page-title">Overview</h1>
+                    <span class="date-display" id="current-date"></span>
+                </div>
+                <div class="header-right">
+                    <div class="streak-badge">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2L15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2z"/></svg>
+                        <span id="streak-count">0</span> day streak
+                    </div>
+                    <div class="avatar">LA</div>
+                </div>
+            </header>
+
+            <!-- Overview Section -->
+            <section class="section" id="section-overview">
+                <!-- Score Cards Row -->
+                <div class="score-cards">
+                    <div class="score-card recovery-card">
+                        <div class="score-ring" data-score="0" data-color="#1db954">
+                            <svg viewBox="0 0 120 120">
+                                <circle cx="60" cy="60" r="52" stroke="rgba(255,255,255,0.08)" stroke-width="8" fill="none"/>
+                                <circle cx="60" cy="60" r="52" stroke="#1db954" stroke-width="8" fill="none" stroke-dasharray="326.73" stroke-dashoffset="326.73" stroke-linecap="round" class="score-ring-progress"/>
+                            </svg>
+                            <div class="score-value">
+                                <span class="score-number" id="recovery-score">--</span>
+                                <span class="score-unit">%</span>
+                            </div>
+                        </div>
+                        <div class="score-info">
+                            <h3>Recovery</h3>
+                            <p class="score-label" id="recovery-label">No data</p>
+                        </div>
+                    </div>
+                    <div class="score-card strain-card">
+                        <div class="score-ring" data-score="0" data-color="#4a9eff">
+                            <svg viewBox="0 0 120 120">
+                                <circle cx="60" cy="60" r="52" stroke="rgba(255,255,255,0.08)" stroke-width="8" fill="none"/>
+                                <circle cx="60" cy="60" r="52" stroke="#4a9eff" stroke-width="8" fill="none" stroke-dasharray="326.73" stroke-dashoffset="326.73" stroke-linecap="round" class="score-ring-progress"/>
+                            </svg>
+                            <div class="score-value">
+                                <span class="score-number" id="strain-score">--</span>
+                            </div>
+                        </div>
+                        <div class="score-info">
+                            <h3>Strain</h3>
+                            <p class="score-label" id="strain-label">No data</p>
+                        </div>
+                    </div>
+                    <div class="score-card sleep-card">
+                        <div class="score-ring" data-score="0" data-color="#bf5af2">
+                            <svg viewBox="0 0 120 120">
+                                <circle cx="60" cy="60" r="52" stroke="rgba(255,255,255,0.08)" stroke-width="8" fill="none"/>
+                                <circle cx="60" cy="60" r="52" stroke="#bf5af2" stroke-width="8" fill="none" stroke-dasharray="326.73" stroke-dashoffset="326.73" stroke-linecap="round" class="score-ring-progress"/>
+                            </svg>
+                            <div class="score-value">
+                                <span class="score-number" id="sleep-score">--</span>
+                                <span class="score-unit">%</span>
+                            </div>
+                        </div>
+                        <div class="score-info">
+                            <h3>Sleep</h3>
+                            <p class="score-label" id="sleep-label">No data</p>
+                        </div>
+                    </div>
+                    <div class="score-card calories-card">
+                        <div class="score-ring" data-score="0" data-color="#ff6b35">
+                            <svg viewBox="0 0 120 120">
+                                <circle cx="60" cy="60" r="52" stroke="rgba(255,255,255,0.08)" stroke-width="8" fill="none"/>
+                                <circle cx="60" cy="60" r="52" stroke="#ff6b35" stroke-width="8" fill="none" stroke-dasharray="326.73" stroke-dashoffset="326.73" stroke-linecap="round" class="score-ring-progress"/>
+                            </svg>
+                            <div class="score-value">
+                                <span class="score-number" id="calories-score">--</span>
+                            </div>
+                        </div>
+                        <div class="score-info">
+                            <h3>Calories</h3>
+                            <p class="score-label" id="calories-label">No data</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Body Stats -->
+                <div class="panel-grid">
+                    <div class="panel">
+                        <div class="panel-header">
+                            <h3>Body Composition</h3>
+                            <span class="panel-badge">lbs</span>
+                        </div>
+                        <div class="body-stats">
+                            <div class="body-stat">
+                                <span class="stat-label">Current Weight</span>
+                                <span class="stat-value" id="current-weight">-- lbs</span>
+                            </div>
+                            <div class="body-stat">
+                                <span class="stat-label">Goal Weight</span>
+                                <span class="stat-value" id="goal-weight">-- lbs</span>
+                            </div>
+                            <div class="body-stat">
+                                <span class="stat-label">Body Fat</span>
+                                <span class="stat-value" id="body-fat">--%</span>
+                            </div>
+                            <div class="body-stat">
+                                <span class="stat-label">Muscle Mass</span>
+                                <span class="stat-value" id="muscle-mass">-- lbs</span>
+                            </div>
+                            <div class="body-stat">
+                                <span class="stat-label">BMI</span>
+                                <span class="stat-value" id="bmi">--</span>
+                            </div>
+                            <div class="body-stat">
+                                <span class="stat-label">Resting HR</span>
+                                <span class="stat-value" id="resting-hr">-- bpm</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="panel">
+                        <div class="panel-header">
+                            <h3>Today's Nutrition</h3>
+                        </div>
+                        <div class="macro-bars">
+                            <div class="macro-item">
+                                <div class="macro-top">
+                                    <span class="macro-name">Calories</span>
+                                    <span class="macro-value"><span id="cal-current">0</span> / <span id="cal-goal">2,400</span></span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill calories-fill" id="cal-bar" style="width: 0%"></div>
+                                </div>
+                            </div>
+                            <div class="macro-item">
+                                <div class="macro-top">
+                                    <span class="macro-name">Protein</span>
+                                    <span class="macro-value"><span id="protein-current">0</span>g / <span id="protein-goal">180</span>g</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill protein-fill" id="protein-bar" style="width: 0%"></div>
+                                </div>
+                            </div>
+                            <div class="macro-item">
+                                <div class="macro-top">
+                                    <span class="macro-name">Carbs</span>
+                                    <span class="macro-value"><span id="carbs-current">0</span>g / <span id="carbs-goal">280</span>g</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill carbs-fill" id="carbs-bar" style="width: 0%"></div>
+                                </div>
+                            </div>
+                            <div class="macro-item">
+                                <div class="macro-top">
+                                    <span class="macro-name">Fat</span>
+                                    <span class="macro-value"><span id="fat-current">0</span>g / <span id="fat-goal">70</span>g</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill fat-fill" id="fat-bar" style="width: 0%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Activity & HRV -->
+                <div class="panel-grid">
+                    <div class="panel">
+                        <div class="panel-header">
+                            <h3>Weekly Strain</h3>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="strain-chart"></canvas>
+                        </div>
+                    </div>
+                    <div class="panel">
+                        <div class="panel-header">
+                            <h3>HRV Trend</h3>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="hrv-chart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sleep Overview -->
+                <div class="panel">
+                    <div class="panel-header">
+                        <h3>Sleep Performance</h3>
+                    </div>
+                    <div class="sleep-stages">
+                        <div class="sleep-stage">
+                            <div class="stage-bar awake-bar"><div class="stage-fill" id="awake-fill"></div></div>
+                            <span class="stage-label">Awake</span>
+                            <span class="stage-time" id="awake-time">--</span>
+                        </div>
+                        <div class="sleep-stage">
+                            <div class="stage-bar light-bar"><div class="stage-fill" id="light-fill"></div></div>
+                            <span class="stage-label">Light</span>
+                            <span class="stage-time" id="light-time">--</span>
+                        </div>
+                        <div class="sleep-stage">
+                            <div class="stage-bar deep-bar"><div class="stage-fill" id="deep-fill"></div></div>
+                            <span class="stage-label">Deep</span>
+                            <span class="stage-time" id="deep-time">--</span>
+                        </div>
+                        <div class="sleep-stage">
+                            <div class="stage-bar rem-bar"><div class="stage-fill" id="rem-fill"></div></div>
+                            <span class="stage-label">REM</span>
+                            <span class="stage-time" id="rem-time">--</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Goals Section -->
+            <section class="section hidden" id="section-goals">
+                <div class="goals-header">
+                    <h2>Goals & Targets</h2>
+                    <p class="goals-subtitle">Adjust your personal parameters using the sliders below</p>
+                </div>
+                <div class="goals-grid">
+                    <!-- Weight Goal -->
+                    <div class="goal-card">
+                        <div class="goal-icon weight-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6.5 6.5h11l1 13H5.5l1-13z"/><path d="M9 6.5V4a3 3 0 016 0v2.5"/></svg>
+                        </div>
+                        <h3>Weight Goal</h3>
+                        <div class="goal-current">
+                            <span class="goal-value" id="goal-weight-display">175</span>
+                            <span class="goal-unit">lbs</span>
+                        </div>
+                        <div class="goal-slider-container">
+                            <input type="range" class="goal-slider" id="weight-goal-slider" min="100" max="300" value="175" step="1">
+                            <div class="slider-labels">
+                                <span>100 lbs</span>
+                                <span>300 lbs</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Body Fat Goal -->
+                    <div class="goal-card">
+                        <div class="goal-icon bodyfat-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+                        </div>
+                        <h3>Body Fat Goal</h3>
+                        <div class="goal-current">
+                            <span class="goal-value" id="goal-bodyfat-display">15</span>
+                            <span class="goal-unit">%</span>
+                        </div>
+                        <div class="goal-slider-container">
+                            <input type="range" class="goal-slider" id="bodyfat-goal-slider" min="5" max="40" value="15" step="0.5">
+                            <div class="slider-labels">
+                                <span>5%</span>
+                                <span>40%</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Calorie Goal -->
+                    <div class="goal-card">
+                        <div class="goal-icon calorie-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 12c0-3 2-5 2-8-4 2-8 6-8 10a8 8 0 0016 0c0-1-.5-3-2-4-1 2-3 3-4 3s-4-1-4-1z"/></svg>
+                        </div>
+                        <h3>Daily Calories</h3>
+                        <div class="goal-current">
+                            <span class="goal-value" id="goal-calories-display">2,400</span>
+                            <span class="goal-unit">kcal</span>
+                        </div>
+                        <div class="goal-slider-container">
+                            <input type="range" class="goal-slider" id="calories-goal-slider" min="1200" max="5000" value="2400" step="50">
+                            <div class="slider-labels">
+                                <span>1,200</span>
+                                <span>5,000</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Protein Goal -->
+                    <div class="goal-card">
+                        <div class="goal-icon protein-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+                        </div>
+                        <h3>Protein Target</h3>
+                        <div class="goal-current">
+                            <span class="goal-value" id="goal-protein-display">180</span>
+                            <span class="goal-unit">g</span>
+                        </div>
+                        <div class="goal-slider-container">
+                            <input type="range" class="goal-slider" id="protein-goal-slider" min="50" max="350" value="180" step="5">
+                            <div class="slider-labels">
+                                <span>50g</span>
+                                <span>350g</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Carbs Goal -->
+                    <div class="goal-card">
+                        <div class="goal-icon carbs-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 2l10 10M12 2l10 10M7 12l5 10 5-10"/></svg>
+                        </div>
+                        <h3>Carbs Target</h3>
+                        <div class="goal-current">
+                            <span class="goal-value" id="goal-carbs-display">280</span>
+                            <span class="goal-unit">g</span>
+                        </div>
+                        <div class="goal-slider-container">
+                            <input type="range" class="goal-slider" id="carbs-goal-slider" min="50" max="500" value="280" step="5">
+                            <div class="slider-labels">
+                                <span>50g</span>
+                                <span>500g</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Fat Goal -->
+                    <div class="goal-card">
+                        <div class="goal-icon fat-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M8 12l2 2 4-4"/></svg>
+                        </div>
+                        <h3>Fat Target</h3>
+                        <div class="goal-current">
+                            <span class="goal-value" id="goal-fat-display">70</span>
+                            <span class="goal-unit">g</span>
+                        </div>
+                        <div class="goal-slider-container">
+                            <input type="range" class="goal-slider" id="fat-goal-slider" min="20" max="200" value="70" step="5">
+                            <div class="slider-labels">
+                                <span>20g</span>
+                                <span>200g</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Sleep Goal -->
+                    <div class="goal-card">
+                        <div class="goal-icon sleep-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+                        </div>
+                        <h3>Sleep Target</h3>
+                        <div class="goal-current">
+                            <span class="goal-value" id="goal-sleep-display">8.0</span>
+                            <span class="goal-unit">hrs</span>
+                        </div>
+                        <div class="goal-slider-container">
+                            <input type="range" class="goal-slider" id="sleep-goal-slider" min="4" max="12" value="8" step="0.5">
+                            <div class="slider-labels">
+                                <span>4 hrs</span>
+                                <span>12 hrs</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Steps Goal -->
+                    <div class="goal-card">
+                        <div class="goal-icon steps-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg>
+                        </div>
+                        <h3>Daily Steps</h3>
+                        <div class="goal-current">
+                            <span class="goal-value" id="goal-steps-display">10,000</span>
+                            <span class="goal-unit">steps</span>
+                        </div>
+                        <div class="goal-slider-container">
+                            <input type="range" class="goal-slider" id="steps-goal-slider" min="2000" max="30000" value="10000" step="500">
+                            <div class="slider-labels">
+                                <span>2,000</span>
+                                <span>30,000</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Water Goal -->
+                    <div class="goal-card">
+                        <div class="goal-icon water-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2.69l5.66 5.66a8 8 0 11-11.31 0z"/></svg>
+                        </div>
+                        <h3>Water Intake</h3>
+                        <div class="goal-current">
+                            <span class="goal-value" id="goal-water-display">128</span>
+                            <span class="goal-unit">oz</span>
+                        </div>
+                        <div class="goal-slider-container">
+                            <input type="range" class="goal-slider" id="water-goal-slider" min="32" max="256" value="128" step="8">
+                            <div class="slider-labels">
+                                <span>32 oz</span>
+                                <span>256 oz</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="goals-actions">
+                    <button class="btn btn-primary" id="save-goals">Save Goals</button>
+                    <button class="btn btn-secondary" id="reset-goals">Reset to Defaults</button>
+                </div>
+            </section>
+
+            <!-- Body Section -->
+            <section class="section hidden" id="section-body">
+                <div class="panel-grid">
+                    <div class="panel">
+                        <div class="panel-header">
+                            <h3>Weight Trend</h3>
+                            <span class="panel-badge">lbs</span>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="weight-chart"></canvas>
+                        </div>
+                    </div>
+                    <div class="panel">
+                        <div class="panel-header">
+                            <h3>Body Composition</h3>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="composition-chart"></canvas>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel">
+                    <div class="panel-header">
+                        <h3>Key Metrics</h3>
+                    </div>
+                    <div class="metrics-row">
+                        <div class="metric-card">
+                            <span class="metric-label">Current</span>
+                            <span class="metric-value" id="body-current-weight">-- lbs</span>
+                        </div>
+                        <div class="metric-card">
+                            <span class="metric-label">Goal</span>
+                            <span class="metric-value" id="body-goal-weight">-- lbs</span>
+                        </div>
+                        <div class="metric-card">
+                            <span class="metric-label">To Go</span>
+                            <span class="metric-value" id="body-diff-weight">-- lbs</span>
+                        </div>
+                        <div class="metric-card">
+                            <span class="metric-label">BMI</span>
+                            <span class="metric-value" id="body-bmi">--</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Nutrition Section -->
+            <section class="section hidden" id="section-nutrition">
+                <div class="panel-grid">
+                    <div class="panel">
+                        <div class="panel-header">
+                            <h3>Macro Breakdown</h3>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="macro-chart"></canvas>
+                        </div>
+                    </div>
+                    <div class="panel">
+                        <div class="panel-header">
+                            <h3>Calorie Trend</h3>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="calorie-trend-chart"></canvas>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel">
+                    <div class="panel-header">
+                        <h3>Today's Meals</h3>
+                        <button class="btn btn-small" id="add-meal-btn">+ Add Meal</button>
+                    </div>
+                    <div class="meals-list" id="meals-list">
+                        <div class="empty-state">
+                            <p>No meals logged today</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Recovery Section -->
+            <section class="section hidden" id="section-recovery">
+                <div class="panel-grid">
+                    <div class="panel">
+                        <div class="panel-header">
+                            <h3>Recovery Score Trend</h3>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="recovery-chart"></canvas>
+                        </div>
+                    </div>
+                    <div class="panel">
+                        <div class="panel-header">
+                            <h3>HRV</h3>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="hrv-detail-chart"></canvas>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel">
+                    <div class="panel-header">
+                        <h3>Recovery Factors</h3>
+                    </div>
+                    <div class="metrics-row">
+                        <div class="metric-card">
+                            <span class="metric-label">HRV</span>
+                            <span class="metric-value" id="recovery-hrv">-- ms</span>
+                        </div>
+                        <div class="metric-card">
+                            <span class="metric-label">Resting HR</span>
+                            <span class="metric-value" id="recovery-rhr">-- bpm</span>
+                        </div>
+                        <div class="metric-card">
+                            <span class="metric-label">SpO2</span>
+                            <span class="metric-value" id="recovery-spo2">--%</span>
+                        </div>
+                        <div class="metric-card">
+                            <span class="metric-label">Skin Temp</span>
+                            <span class="metric-value" id="recovery-temp">--°F</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Sleep Section -->
+            <section class="section hidden" id="section-sleep">
+                <div class="panel-grid">
+                    <div class="panel">
+                        <div class="panel-header">
+                            <h3>Sleep Duration Trend</h3>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="sleep-trend-chart"></canvas>
+                        </div>
+                    </div>
+                    <div class="panel">
+                        <div class="panel-header">
+                            <h3>Sleep Stages</h3>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="sleep-stages-chart"></canvas>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel">
+                    <div class="panel-header">
+                        <h3>Last Night</h3>
+                    </div>
+                    <div class="metrics-row">
+                        <div class="metric-card">
+                            <span class="metric-label">Time in Bed</span>
+                            <span class="metric-value" id="sleep-time-bed">--</span>
+                        </div>
+                        <div class="metric-card">
+                            <span class="metric-label">Time Asleep</span>
+                            <span class="metric-value" id="sleep-time-asleep">--</span>
+                        </div>
+                        <div class="metric-card">
+                            <span class="metric-label">Efficiency</span>
+                            <span class="metric-value" id="sleep-efficiency">--%</span>
+                        </div>
+                        <div class="metric-card">
+                            <span class="metric-label">Consistency</span>
+                            <span class="metric-value" id="sleep-consistency">--%</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Strain Section -->
+            <section class="section hidden" id="section-strain">
+                <div class="panel-grid">
+                    <div class="panel">
+                        <div class="panel-header">
+                            <h3>Strain History</h3>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="strain-history-chart"></canvas>
+                        </div>
+                    </div>
+                    <div class="panel">
+                        <div class="panel-header">
+                            <h3>Heart Rate Zones</h3>
+                        </div>
+                        <div class="hr-zones">
+                            <div class="zone zone-5"><span class="zone-label">Zone 5</span><div class="zone-bar"><div class="zone-fill" style="width: 5%"></div></div><span class="zone-time">2 min</span></div>
+                            <div class="zone zone-4"><span class="zone-label">Zone 4</span><div class="zone-bar"><div class="zone-fill" style="width: 15%"></div></div><span class="zone-time">8 min</span></div>
+                            <div class="zone zone-3"><span class="zone-label">Zone 3</span><div class="zone-bar"><div class="zone-fill" style="width: 30%"></div></div><span class="zone-time">18 min</span></div>
+                            <div class="zone zone-2"><span class="zone-label">Zone 2</span><div class="zone-bar"><div class="zone-fill" style="width: 35%"></div></div><span class="zone-time">22 min</span></div>
+                            <div class="zone zone-1"><span class="zone-label">Zone 1</span><div class="zone-bar"><div class="zone-fill" style="width: 15%"></div></div><span class="zone-time">10 min</span></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel">
+                    <div class="panel-header">
+                        <h3>Activity Summary</h3>
+                    </div>
+                    <div class="metrics-row">
+                        <div class="metric-card">
+                            <span class="metric-label">Day Strain</span>
+                            <span class="metric-value" id="strain-day">--</span>
+                        </div>
+                        <div class="metric-card">
+                            <span class="metric-label">Avg HR</span>
+                            <span class="metric-value" id="strain-avg-hr">-- bpm</span>
+                        </div>
+                        <div class="metric-card">
+                            <span class="metric-label">Max HR</span>
+                            <span class="metric-value" id="strain-max-hr">-- bpm</span>
+                        </div>
+                        <div class="metric-card">
+                            <span class="metric-label">Calories</span>
+                            <span class="metric-value" id="strain-calories">--</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Meal Modal -->
+    <div class="modal-overlay hidden" id="meal-modal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>Log Meal</h3>
+                <button class="modal-close" id="close-meal-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Meal Name</label>
+                    <input type="text" id="meal-name" placeholder="e.g., Grilled Chicken Salad">
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Calories</label>
+                        <input type="number" id="meal-calories" placeholder="0">
+                    </div>
+                    <div class="form-group">
+                        <label>Protein (g)</label>
+                        <input type="number" id="meal-protein" placeholder="0">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Carbs (g)</label>
+                        <input type="number" id="meal-carbs" placeholder="0">
+                    </div>
+                    <div class="form-group">
+                        <label>Fat (g)</label>
+                        <input type="number" id="meal-fat" placeholder="0">
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="cancel-meal">Cancel</button>
+                <button class="btn btn-primary" id="save-meal">Save Meal</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div class="modal-overlay hidden" id="settings-modal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>Settings</h3>
+                <button class="modal-close" id="close-settings-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Display Name</label>
+                    <input type="text" id="settings-name" value="Luis Alvarado">
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Height (inches)</label>
+                        <input type="number" id="settings-height" value="70">
+                    </div>
+                    <div class="form-group">
+                        <label>Age</label>
+                        <input type="number" id="settings-age" value="30">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Activity Level</label>
+                    <select id="settings-activity">
+                        <option value="sedentary">Sedentary</option>
+                        <option value="light">Lightly Active</option>
+                        <option value="moderate" selected>Moderately Active</option>
+                        <option value="active">Very Active</option>
+                        <option value="extreme">Extremely Active</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="cancel-settings">Cancel</button>
+                <button class="btn btn-primary" id="save-settings">Save Settings</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
