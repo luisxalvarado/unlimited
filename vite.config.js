@@ -14,6 +14,10 @@ export default defineConfig({
     rollupOptions: {
       input: {
         main: 'index.html',
+        freedom: 'freedom/index.html',
+        health: 'health/index.html',
+        wealth: 'wealth/index.html',
+        ata: 'ata/index.html',
       },
     },
   },
