@@ -47,6 +47,10 @@
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
                     <span>Strain</span>
                 </li>
+                <li class="nav-item" data-section="freedom">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg>
+                    <span>Freedom</span>
+                </li>
                 <li class="nav-item" data-section="goals">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
                     <span>Goals</span>
@@ -271,6 +275,275 @@
                             <span class="stage-label">REM</span>
                             <span class="stage-time" id="rem-time">--</span>
                         </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Freedom Section -->
+            <section class="section hidden" id="section-freedom">
+                <!-- Modern Freedom Score Ring (Hero) -->
+                <div class="freedom-hero">
+                    <div class="freedom-hero-ring">
+                        <svg viewBox="0 0 180 180">
+                            <circle cx="90" cy="90" r="78" stroke="rgba(255,255,255,0.06)" stroke-width="12" fill="none"/>
+                            <circle cx="90" cy="90" r="78" stroke="#ffd60a" stroke-width="12" fill="none" stroke-dasharray="490.09" stroke-dashoffset="490.09" stroke-linecap="round" class="freedom-ring-progress" id="freedom-hero-ring"/>
+                        </svg>
+                        <div class="freedom-hero-value">
+                            <span class="freedom-hero-number" id="freedom-hero-score">0.0</span>
+                            <span class="freedom-hero-unit">%</span>
+                            <span class="freedom-hero-label">Modern Freedom</span>
+                        </div>
+                    </div>
+                    <div class="freedom-hero-info">
+                        <h2 id="freedom-level-name">Modern Slavery</h2>
+                        <p id="freedom-level-desc">Everything you do is for someone else. You are outsourced. Numb. Lost.</p>
+                    </div>
+                </div>
+
+                <!-- 4 Sub-Freedom Score Cards -->
+                <div class="score-cards freedom-scores">
+                    <div class="score-card freedom-work-card">
+                        <div class="score-ring" data-score="0" data-color="#4a9eff">
+                            <svg viewBox="0 0 120 120">
+                                <circle cx="60" cy="60" r="52" stroke="rgba(255,255,255,0.08)" stroke-width="8" fill="none"/>
+                                <circle cx="60" cy="60" r="52" stroke="#4a9eff" stroke-width="8" fill="none" stroke-dasharray="326.73" stroke-dashoffset="326.73" stroke-linecap="round" class="score-ring-progress" id="work-freedom-ring"/>
+                            </svg>
+                            <div class="score-value">
+                                <span class="score-number" id="work-freedom-score">0.0</span>
+                                <span class="score-unit">%</span>
+                            </div>
+                        </div>
+                        <div class="score-info">
+                            <h3>Work Freedom</h3>
+                            <p class="score-label" id="work-freedom-label">Online Income vs Expenses</p>
+                        </div>
+                    </div>
+                    <div class="score-card freedom-financial-card">
+                        <div class="score-ring" data-score="0" data-color="#1db954">
+                            <svg viewBox="0 0 120 120">
+                                <circle cx="60" cy="60" r="52" stroke="rgba(255,255,255,0.08)" stroke-width="8" fill="none"/>
+                                <circle cx="60" cy="60" r="52" stroke="#1db954" stroke-width="8" fill="none" stroke-dasharray="326.73" stroke-dashoffset="326.73" stroke-linecap="round" class="score-ring-progress" id="financial-freedom-ring"/>
+                            </svg>
+                            <div class="score-value">
+                                <span class="score-number" id="financial-freedom-score">0.0</span>
+                                <span class="score-unit">%</span>
+                            </div>
+                        </div>
+                        <div class="score-info">
+                            <h3>Financial Freedom</h3>
+                            <p class="score-label" id="financial-freedom-label">Passive Income vs Ideal Life</p>
+                        </div>
+                    </div>
+                    <div class="score-card freedom-mental-card">
+                        <div class="score-ring" data-score="0" data-color="#bf5af2">
+                            <svg viewBox="0 0 120 120">
+                                <circle cx="60" cy="60" r="52" stroke="rgba(255,255,255,0.08)" stroke-width="8" fill="none"/>
+                                <circle cx="60" cy="60" r="52" stroke="#bf5af2" stroke-width="8" fill="none" stroke-dasharray="326.73" stroke-dashoffset="326.73" stroke-linecap="round" class="score-ring-progress" id="mental-freedom-ring"/>
+                            </svg>
+                            <div class="score-value">
+                                <span class="score-number" id="mental-freedom-score">0.0</span>
+                                <span class="score-unit">%</span>
+                            </div>
+                        </div>
+                        <div class="score-info">
+                            <h3>Mental Freedom</h3>
+                            <p class="score-label" id="mental-freedom-label">Mind & Inspiration Score</p>
+                        </div>
+                    </div>
+                    <div class="score-card freedom-time-card">
+                        <div class="score-ring" data-score="0" data-color="#64d2ff">
+                            <svg viewBox="0 0 120 120">
+                                <circle cx="60" cy="60" r="52" stroke="rgba(255,255,255,0.08)" stroke-width="8" fill="none"/>
+                                <circle cx="60" cy="60" r="52" stroke="#64d2ff" stroke-width="8" fill="none" stroke-dasharray="326.73" stroke-dashoffset="326.73" stroke-linecap="round" class="score-ring-progress" id="time-freedom-ring"/>
+                            </svg>
+                            <div class="score-value">
+                                <span class="score-number" id="time-freedom-score">0.0</span>
+                                <span class="score-unit">%</span>
+                            </div>
+                        </div>
+                        <div class="score-info">
+                            <h3>Time Freedom</h3>
+                            <p class="score-label" id="time-freedom-label">Liquid Assets Runway</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Measure Panel: Inputs + Summary -->
+                <div class="panel-grid">
+                    <!-- My Numbers (Input) -->
+                    <div class="panel">
+                        <div class="panel-header">
+                            <h3>My Numbers</h3>
+                            <span class="panel-badge">Measure</span>
+                        </div>
+                        <div class="freedom-inputs">
+                            <div class="freedom-input-group">
+                                <label>Monthly Expenses</label>
+                                <div class="input-with-prefix">
+                                    <span class="input-prefix">$</span>
+                                    <input type="number" id="freedom-monthly-expenses" placeholder="0" min="0" step="100">
+                                </div>
+                            </div>
+                            <div class="freedom-input-group">
+                                <label>Cost of Ideal Lifestyle</label>
+                                <div class="input-with-prefix">
+                                    <span class="input-prefix">$</span>
+                                    <input type="number" id="freedom-ideal-lifestyle" placeholder="0" min="0" step="100">
+                                </div>
+                            </div>
+                            <div class="freedom-input-group">
+                                <label>Online Income <span class="input-hint">(Type B - Active)</span></label>
+                                <div class="input-with-prefix">
+                                    <span class="input-prefix">$</span>
+                                    <input type="number" id="freedom-online-income" placeholder="0" min="0" step="100">
+                                </div>
+                            </div>
+                            <div class="freedom-input-group">
+                                <label>Passive Income <span class="input-hint">(Type A)</span></label>
+                                <div class="input-with-prefix">
+                                    <span class="input-prefix">$</span>
+                                    <input type="number" id="freedom-passive-income" placeholder="0" min="0" step="100">
+                                </div>
+                            </div>
+                            <div class="freedom-input-group">
+                                <label>Liquid Assets</label>
+                                <div class="input-with-prefix">
+                                    <span class="input-prefix">$</span>
+                                    <input type="number" id="freedom-liquid-assets" placeholder="0" min="0" step="1000">
+                                </div>
+                            </div>
+                            <div class="freedom-input-group">
+                                <label>Mental Freedom Score</label>
+                                <div class="input-with-suffix">
+                                    <input type="number" id="freedom-mental-score" placeholder="0" min="0" max="10" step="0.5">
+                                    <span class="input-suffix">/ 10</span>
+                                </div>
+                            </div>
+                            <div class="freedom-input-group">
+                                <label>Inspired Life Score</label>
+                                <div class="input-with-suffix">
+                                    <input type="number" id="freedom-inspired-score" placeholder="0" min="0" max="10" step="0.5">
+                                    <span class="input-suffix">/ 10</span>
+                                </div>
+                            </div>
+                            <button class="btn btn-primary freedom-save-btn" id="freedom-calculate">Calculate & Save</button>
+                        </div>
+                    </div>
+
+                    <!-- My Summary (Output) -->
+                    <div class="panel">
+                        <div class="panel-header">
+                            <h3>My Summary</h3>
+                            <span class="panel-badge">Results</span>
+                        </div>
+                        <div class="freedom-summary">
+                            <div class="freedom-bar-item">
+                                <div class="freedom-bar-top">
+                                    <span class="freedom-bar-icon" style="color: #4a9eff;">&#128187;</span>
+                                    <span class="freedom-bar-name">Work Freedom</span>
+                                    <span class="freedom-bar-value" id="summary-work-pct">0.0%</span>
+                                </div>
+                                <div class="freedom-bar-track">
+                                    <div class="freedom-bar-fill work-fill" id="summary-work-bar" style="width: 0%"></div>
+                                </div>
+                            </div>
+                            <div class="freedom-bar-item">
+                                <div class="freedom-bar-top">
+                                    <span class="freedom-bar-icon" style="color: #1db954;">&#128176;</span>
+                                    <span class="freedom-bar-name">Financial Freedom</span>
+                                    <span class="freedom-bar-value" id="summary-financial-pct">0.0%</span>
+                                </div>
+                                <div class="freedom-bar-track">
+                                    <div class="freedom-bar-fill financial-fill" id="summary-financial-bar" style="width: 0%"></div>
+                                </div>
+                            </div>
+                            <div class="freedom-bar-item">
+                                <div class="freedom-bar-top">
+                                    <span class="freedom-bar-icon" style="color: #bf5af2;">&#129504;</span>
+                                    <span class="freedom-bar-name">Mental Freedom</span>
+                                    <span class="freedom-bar-value" id="summary-mental-pct">0.0%</span>
+                                </div>
+                                <div class="freedom-bar-track">
+                                    <div class="freedom-bar-fill mental-fill" id="summary-mental-bar" style="width: 0%"></div>
+                                </div>
+                            </div>
+                            <div class="freedom-bar-item">
+                                <div class="freedom-bar-top">
+                                    <span class="freedom-bar-icon" style="color: #64d2ff;">&#128197;</span>
+                                    <span class="freedom-bar-name">Time Freedom</span>
+                                    <span class="freedom-bar-value" id="summary-time-pct">0.0%</span>
+                                </div>
+                                <div class="freedom-bar-track">
+                                    <div class="freedom-bar-fill time-fill" id="summary-time-bar" style="width: 0%"></div>
+                                </div>
+                            </div>
+                            <div class="freedom-bar-divider"></div>
+                            <div class="freedom-bar-item freedom-bar-total">
+                                <div class="freedom-bar-top">
+                                    <span class="freedom-bar-icon" style="color: #ffd60a;">&#127759;</span>
+                                    <span class="freedom-bar-name">Modern Freedom</span>
+                                    <span class="freedom-bar-value" id="summary-modern-pct">0.0%</span>
+                                </div>
+                                <div class="freedom-bar-track freedom-bar-track-gold">
+                                    <div class="freedom-bar-fill modern-fill" id="summary-modern-bar" style="width: 0%"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Score Scale Reference -->
+                        <div class="freedom-scale">
+                            <h4>Freedom Scale</h4>
+                            <div class="freedom-scale-items">
+                                <div class="scale-item"><span class="scale-pct">100%</span><span class="scale-name">Modern Freedom</span></div>
+                                <div class="scale-item"><span class="scale-pct">90%</span><span class="scale-name">Self-Actualised</span></div>
+                                <div class="scale-item"><span class="scale-pct">80%</span><span class="scale-name">Self-Governed</span></div>
+                                <div class="scale-item"><span class="scale-pct">70%</span><span class="scale-name">Semi-Free</span></div>
+                                <div class="scale-item"><span class="scale-pct">60%</span><span class="scale-name">Controlled Comfort</span></div>
+                                <div class="scale-item"><span class="scale-pct">50%</span><span class="scale-name">The Plateau</span></div>
+                                <div class="scale-item"><span class="scale-pct">40%</span><span class="scale-name">Quiet Constraint</span></div>
+                                <div class="scale-item"><span class="scale-pct">30%</span><span class="scale-name">System-Owned</span></div>
+                                <div class="scale-item"><span class="scale-pct">20%</span><span class="scale-name">Life on Rails</span></div>
+                                <div class="scale-item"><span class="scale-pct">10%</span><span class="scale-name">Identity Erosion</span></div>
+                                <div class="scale-item"><span class="scale-pct">0%</span><span class="scale-name">Modern Slavery</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Progress Chart -->
+                <div class="panel">
+                    <div class="panel-header">
+                        <h3>My Modern Freedom Progress</h3>
+                        <button class="btn btn-small" id="freedom-snapshot-btn">+ Save Snapshot</button>
+                    </div>
+                    <div class="chart-container freedom-chart-container">
+                        <canvas id="freedom-progress-chart"></canvas>
+                    </div>
+                </div>
+
+                <!-- History Table -->
+                <div class="panel">
+                    <div class="panel-header">
+                        <h3>Progress History</h3>
+                        <button class="btn btn-small" id="freedom-clear-history">Clear History</button>
+                    </div>
+                    <div class="freedom-history-table-wrapper">
+                        <table class="freedom-history-table" id="freedom-history-table">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Work</th>
+                                    <th>Financial</th>
+                                    <th>Mental</th>
+                                    <th>Time</th>
+                                    <th>Modern Freedom</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody id="freedom-history-body">
+                                <tr class="empty-row"><td colspan="7">No snapshots yet. Save your first snapshot above.</td></tr>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </section>

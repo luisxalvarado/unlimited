@@ -34,7 +34,17 @@
         },
         meals: [],
         streak: 7,
-        todayNutrition: { calories: 0, protein: 0, carbs: 0, fat: 0 }
+        todayNutrition: { calories: 0, protein: 0, carbs: 0, fat: 0 },
+        freedom: {
+            monthlyExpenses: 0,
+            idealLifestyle: 0,
+            onlineIncome: 0,
+            passiveIncome: 0,
+            liquidAssets: 0,
+            mentalScore: 0,
+            inspiredScore: 0
+        },
+        freedomHistory: []
     };
 
     let state = loadState();
@@ -528,6 +538,9 @@
             case 'strain':
                 initStrainCharts();
                 break;
+            case 'freedom':
+                initFreedomSection();
+                break;
         }
     }
 
@@ -890,6 +903,368 @@
         document.getElementById('strain-avg-hr').textContent = Math.round(70 + Math.random() * 30) + ' bpm';
         document.getElementById('strain-max-hr').textContent = Math.round(140 + Math.random() * 40) + ' bpm';
         document.getElementById('strain-calories').textContent = Math.round(1800 + Math.random() * 800);
+    }
+
+    // ---- Freedom Dashboard ----
+    const freedomLevels = [
+        { min: 100, name: 'Modern Freedom', desc: 'Total alignment. You run your life. Nothing owns you. Calm, clear, sovereign.' },
+        { min: 90, name: 'Self-Actualised', desc: 'You live with power & inspiration. Minimal friction. Most days feel like yours.' },
+        { min: 80, name: 'Self-Governed', desc: 'You lead. You create. You choose. There\'s structure, but it serves you.' },
+        { min: 70, name: 'Semi-Free', desc: 'You\'ve taken ground. Still some internal or external pressure pulling at you.' },
+        { min: 60, name: 'Controlled Comfort', desc: 'Life\'s okay. But you\'re negotiating too much. Energy leaks everywhere.' },
+        { min: 50, name: 'The Plateau', desc: 'Stuck. You\'re doing things that "work" but don\'t feel right. No real momentum.' },
+        { min: 40, name: 'Quiet Constraint', desc: 'You feel the tension daily. Choices feel limited. You\'re reacting more than leading.' },
+        { min: 30, name: 'System-Owned', desc: 'You have little control. Your time, mind, and energy are claimed by others.' },
+        { min: 20, name: 'Life on Rails', desc: 'Wake up, obey, repeat. You\'re living by scripts that aren\'t yours.' },
+        { min: 10, name: 'Identity Erosion', desc: 'You barely recognise yourself. No clarity, no power, no voice.' },
+        { min: 0, name: 'Modern Slavery', desc: 'Everything you do is for someone else. You are outsourced. Numb. Lost.' }
+    ];
+
+    function getFreedomLevel(pct) {
+        for (const level of freedomLevels) {
+            if (pct >= level.min) return level;
+        }
+        return freedomLevels[freedomLevels.length - 1];
+    }
+
+    function calculateFreedomScores() {
+        const f = state.freedom;
+        const work = f.monthlyExpenses > 0 ? Math.min((f.onlineIncome / f.monthlyExpenses) * 100, 100) : 0;
+        const financial = f.idealLifestyle > 0 ? Math.min((f.passiveIncome / f.idealLifestyle) * 100, 100) : 0;
+        const mental = ((f.mentalScore + f.inspiredScore) / 20) * 100;
+        const time = f.monthlyExpenses > 0 ? Math.min((f.liquidAssets / (f.monthlyExpenses * 12)) * 100, 100) : 0;
+        const modern = (work + financial + mental + time) / 4;
+
+        return {
+            work: Math.round(work * 10) / 10,
+            financial: Math.round(financial * 10) / 10,
+            mental: Math.round(mental * 10) / 10,
+            time: Math.round(time * 10) / 10,
+            modern: Math.round(modern * 10) / 10
+        };
+    }
+
+    function getBarColor(pct) {
+        if (pct >= 67) return '#1db954';
+        if (pct >= 34) return '#ffd60a';
+        return '#ff453a';
+    }
+
+    function updateFreedomDisplay() {
+        const scores = calculateFreedomScores();
+        const level = getFreedomLevel(scores.modern);
+
+        // Hero ring
+        const heroRing = document.getElementById('freedom-hero-ring');
+        if (heroRing) {
+            const circumference = 490.09;
+            const offset = circumference - (Math.min(scores.modern / 100, 1) * circumference);
+            heroRing.style.transition = 'stroke-dashoffset 1s ease, stroke 0.5s ease';
+            heroRing.style.strokeDashoffset = offset;
+            heroRing.style.stroke = getBarColor(scores.modern);
+        }
+        const heroNumber = document.getElementById('freedom-hero-score');
+        if (heroNumber) heroNumber.textContent = scores.modern.toFixed(1);
+
+        // Level info
+        const levelName = document.getElementById('freedom-level-name');
+        const levelDesc = document.getElementById('freedom-level-desc');
+        if (levelName) {
+            levelName.textContent = level.name;
+            levelName.style.color = getBarColor(scores.modern);
+        }
+        if (levelDesc) levelDesc.textContent = level.desc;
+
+        // Hero number color
+        const heroNum = document.querySelector('.freedom-hero-number');
+        if (heroNum) heroNum.style.color = getBarColor(scores.modern);
+
+        // Sub-score rings
+        const ringConfigs = [
+            { id: 'work-freedom-ring', scoreId: 'work-freedom-score', score: scores.work, color: '#4a9eff' },
+            { id: 'financial-freedom-ring', scoreId: 'financial-freedom-score', score: scores.financial, color: '#1db954' },
+            { id: 'mental-freedom-ring', scoreId: 'mental-freedom-score', score: scores.mental, color: '#bf5af2' },
+            { id: 'time-freedom-ring', scoreId: 'time-freedom-score', score: scores.time, color: '#64d2ff' }
+        ];
+
+        ringConfigs.forEach(cfg => {
+            const ring = document.getElementById(cfg.id);
+            const scoreEl = document.getElementById(cfg.scoreId);
+            if (ring) {
+                const circumference = 326.73;
+                const offset = circumference - (Math.min(cfg.score / 100, 1) * circumference);
+                ring.style.transition = 'stroke-dashoffset 1s ease';
+                ring.style.strokeDashoffset = offset;
+            }
+            if (scoreEl) scoreEl.textContent = cfg.score.toFixed(1);
+        });
+
+        // Summary bars
+        const bars = [
+            { pctId: 'summary-work-pct', barId: 'summary-work-bar', score: scores.work },
+            { pctId: 'summary-financial-pct', barId: 'summary-financial-bar', score: scores.financial },
+            { pctId: 'summary-mental-pct', barId: 'summary-mental-bar', score: scores.mental },
+            { pctId: 'summary-time-pct', barId: 'summary-time-bar', score: scores.time },
+            { pctId: 'summary-modern-pct', barId: 'summary-modern-bar', score: scores.modern }
+        ];
+
+        bars.forEach(b => {
+            const pctEl = document.getElementById(b.pctId);
+            const barEl = document.getElementById(b.barId);
+            if (pctEl) pctEl.textContent = b.score.toFixed(1) + '%';
+            if (barEl) barEl.style.width = Math.min(b.score, 100) + '%';
+        });
+
+        // Highlight active scale item
+        document.querySelectorAll('.scale-item').forEach(item => item.classList.remove('scale-active'));
+        const scaleItems = document.querySelectorAll('.scale-item');
+        for (const item of scaleItems) {
+            const name = item.querySelector('.scale-name');
+            if (name && name.textContent === level.name) {
+                item.classList.add('scale-active');
+                break;
+            }
+        }
+    }
+
+    function loadFreedomInputs() {
+        const f = state.freedom;
+        const fields = {
+            'freedom-monthly-expenses': f.monthlyExpenses,
+            'freedom-ideal-lifestyle': f.idealLifestyle,
+            'freedom-online-income': f.onlineIncome,
+            'freedom-passive-income': f.passiveIncome,
+            'freedom-liquid-assets': f.liquidAssets,
+            'freedom-mental-score': f.mentalScore,
+            'freedom-inspired-score': f.inspiredScore
+        };
+
+        Object.entries(fields).forEach(([id, val]) => {
+            const el = document.getElementById(id);
+            if (el) el.value = val || '';
+        });
+    }
+
+    function readFreedomInputs() {
+        state.freedom.monthlyExpenses = parseFloat(document.getElementById('freedom-monthly-expenses').value) || 0;
+        state.freedom.idealLifestyle = parseFloat(document.getElementById('freedom-ideal-lifestyle').value) || 0;
+        state.freedom.onlineIncome = parseFloat(document.getElementById('freedom-online-income').value) || 0;
+        state.freedom.passiveIncome = parseFloat(document.getElementById('freedom-passive-income').value) || 0;
+        state.freedom.liquidAssets = parseFloat(document.getElementById('freedom-liquid-assets').value) || 0;
+        state.freedom.mentalScore = parseFloat(document.getElementById('freedom-mental-score').value) || 0;
+        state.freedom.inspiredScore = parseFloat(document.getElementById('freedom-inspired-score').value) || 0;
+    }
+
+    function saveFreedomSnapshot() {
+        const scores = calculateFreedomScores();
+        const snapshot = {
+            date: new Date().toISOString(),
+            work: scores.work,
+            financial: scores.financial,
+            mental: scores.mental,
+            time: scores.time,
+            modern: scores.modern
+        };
+        if (!state.freedomHistory) state.freedomHistory = [];
+        state.freedomHistory.push(snapshot);
+        saveState();
+        renderFreedomHistory();
+        initFreedomChart();
+        showToast('Snapshot saved');
+    }
+
+    function renderFreedomHistory() {
+        const tbody = document.getElementById('freedom-history-body');
+        if (!tbody) return;
+
+        if (!state.freedomHistory || state.freedomHistory.length === 0) {
+            tbody.innerHTML = '<tr class="empty-row"><td colspan="7">No snapshots yet. Save your first snapshot above.</td></tr>';
+            return;
+        }
+
+        tbody.innerHTML = state.freedomHistory.map((entry, i) => {
+            const d = new Date(entry.date);
+            const dateStr = d.toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' });
+            return `<tr>
+                <td>${dateStr}</td>
+                <td>${entry.work.toFixed(1)}%</td>
+                <td>${entry.financial.toFixed(1)}%</td>
+                <td>${entry.mental.toFixed(1)}%</td>
+                <td>${entry.time.toFixed(1)}%</td>
+                <td class="modern-freedom-cell">${entry.modern.toFixed(1)}%</td>
+                <td><button class="history-delete-btn" data-index="${i}">&times;</button></td>
+            </tr>`;
+        }).reverse().join('');
+
+        tbody.querySelectorAll('.history-delete-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const idx = parseInt(btn.dataset.index);
+                state.freedomHistory.splice(idx, 1);
+                saveState();
+                renderFreedomHistory();
+                initFreedomChart();
+            });
+        });
+    }
+
+    function initFreedomChart() {
+        const canvas = document.getElementById('freedom-progress-chart');
+        if (!canvas) return;
+
+        destroyChart('freedom-progress');
+
+        const history = state.freedomHistory || [];
+        if (history.length === 0) {
+            // Show empty state
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            return;
+        }
+
+        const labels = history.map(h => {
+            const d = new Date(h.date);
+            return d.toLocaleDateString('en-US', { day: 'numeric', month: 'short' });
+        });
+
+        chartInstances['freedom-progress'] = new Chart(canvas, {
+            type: 'line',
+            data: {
+                labels,
+                datasets: [
+                    {
+                        label: 'Modern Freedom',
+                        data: history.map(h => h.modern),
+                        borderColor: '#ffd60a',
+                        backgroundColor: 'rgba(255, 214, 10, 0.1)',
+                        fill: true,
+                        tension: 0.4,
+                        borderWidth: 3,
+                        pointRadius: 5,
+                        pointBackgroundColor: '#ffd60a',
+                        pointBorderColor: '#0a0a0f',
+                        pointBorderWidth: 2
+                    },
+                    {
+                        label: 'Work Freedom',
+                        data: history.map(h => h.work),
+                        borderColor: '#4a9eff',
+                        tension: 0.4,
+                        borderWidth: 2,
+                        pointRadius: 3,
+                        pointBackgroundColor: '#4a9eff',
+                        fill: false
+                    },
+                    {
+                        label: 'Financial Freedom',
+                        data: history.map(h => h.financial),
+                        borderColor: '#1db954',
+                        tension: 0.4,
+                        borderWidth: 2,
+                        pointRadius: 3,
+                        pointBackgroundColor: '#1db954',
+                        fill: false
+                    },
+                    {
+                        label: 'Mental Freedom',
+                        data: history.map(h => h.mental),
+                        borderColor: '#bf5af2',
+                        tension: 0.4,
+                        borderWidth: 2,
+                        pointRadius: 3,
+                        pointBackgroundColor: '#bf5af2',
+                        fill: false
+                    },
+                    {
+                        label: 'Time Freedom',
+                        data: history.map(h => h.time),
+                        borderColor: '#64d2ff',
+                        tension: 0.4,
+                        borderWidth: 2,
+                        pointRadius: 3,
+                        pointBackgroundColor: '#64d2ff',
+                        fill: false
+                    }
+                ]
+            },
+            options: {
+                ...chartDefaults,
+                plugins: {
+                    ...chartDefaults.plugins,
+                    legend: {
+                        position: 'top',
+                        labels: {
+                            color: 'rgba(255,255,255,0.6)',
+                            font: { size: 11, weight: '500' },
+                            padding: 16,
+                            usePointStyle: true,
+                            pointStyleWidth: 8
+                        }
+                    }
+                },
+                scales: {
+                    ...chartDefaults.scales,
+                    y: {
+                        ...chartDefaults.scales.y,
+                        min: 0,
+                        max: 100,
+                        ticks: {
+                            ...chartDefaults.scales.y.ticks,
+                            callback: v => v + '%',
+                            stepSize: 20
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    function initFreedomSection() {
+        loadFreedomInputs();
+        updateFreedomDisplay();
+        renderFreedomHistory();
+        initFreedomChart();
+    }
+
+    // Freedom event listeners
+    const freedomCalcBtn = document.getElementById('freedom-calculate');
+    if (freedomCalcBtn) {
+        freedomCalcBtn.addEventListener('click', () => {
+            readFreedomInputs();
+            saveState();
+            updateFreedomDisplay();
+            showToast('Freedom scores calculated');
+        });
+    }
+
+    // Live calculation on input change
+    document.querySelectorAll('.freedom-inputs input').forEach(input => {
+        input.addEventListener('input', () => {
+            readFreedomInputs();
+            updateFreedomDisplay();
+        });
+    });
+
+    const freedomSnapshotBtn = document.getElementById('freedom-snapshot-btn');
+    if (freedomSnapshotBtn) {
+        freedomSnapshotBtn.addEventListener('click', () => {
+            readFreedomInputs();
+            saveState();
+            updateFreedomDisplay();
+            saveFreedomSnapshot();
+        });
+    }
+
+    const freedomClearHistoryBtn = document.getElementById('freedom-clear-history');
+    if (freedomClearHistoryBtn) {
+        freedomClearHistoryBtn.addEventListener('click', () => {
+            if (state.freedomHistory && state.freedomHistory.length > 0) {
+                state.freedomHistory = [];
+                saveState();
+                renderFreedomHistory();
+                initFreedomChart();
+                showToast('History cleared');
+            }
+        });
     }
 
     // ---- Initialize ----
