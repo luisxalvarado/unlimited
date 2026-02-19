@@ -1,0 +1,1120 @@
+/* ============================================
+   Freedom Dashboard
+   Whoop-inspired dark aesthetic
+   ============================================ */
+
+:root {
+    --bg-primary: #0a0a0f;
+    --bg-secondary: #111118;
+    --bg-card: #16161f;
+    --bg-card-hover: #1c1c28;
+    --bg-elevated: #1e1e2a;
+    --border-color: rgba(255, 255, 255, 0.06);
+    --border-hover: rgba(255, 255, 255, 0.12);
+
+    --text-primary: #ffffff;
+    --text-secondary: rgba(255, 255, 255, 0.6);
+    --text-tertiary: rgba(255, 255, 255, 0.35);
+    --text-muted: rgba(255, 255, 255, 0.2);
+
+    --green: #1db954;
+    --green-dim: rgba(29, 185, 84, 0.15);
+    --blue: #4a9eff;
+    --blue-dim: rgba(74, 158, 255, 0.15);
+    --purple: #bf5af2;
+    --purple-dim: rgba(191, 90, 242, 0.15);
+    --orange: #ff6b35;
+    --orange-dim: rgba(255, 107, 53, 0.15);
+    --red: #ff453a;
+    --red-dim: rgba(255, 69, 58, 0.15);
+    --yellow: #ffd60a;
+    --yellow-dim: rgba(255, 214, 10, 0.15);
+    --cyan: #64d2ff;
+
+    --sidebar-width: 240px;
+    --header-height: 64px;
+    --radius: 12px;
+    --radius-sm: 8px;
+    --radius-lg: 16px;
+    --transition: all 0.2s ease;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.2); }
+
+/* ============================================
+   Layout
+   ============================================ */
+.app {
+    display: flex;
+    min-height: 100vh;
+}
+
+/* ============================================
+   Sidebar
+   ============================================ */
+.sidebar {
+    width: var(--sidebar-width);
+    background: var(--bg-secondary);
+    border-right: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    z-index: 100;
+}
+
+.sidebar-brand {
+    padding: 24px 20px;
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.brand-icon {
+    width: 36px;
+    height: 36px;
+    background: linear-gradient(135deg, var(--yellow), #e6c200);
+    border-radius: var(--radius-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.brand-icon svg {
+    width: 20px;
+    height: 20px;
+    color: #0a0a0f;
+}
+
+.brand-text {
+    display: flex;
+    flex-direction: column;
+}
+
+.brand-name {
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    color: var(--text-primary);
+    line-height: 1.2;
+}
+
+.user-name {
+    font-size: 11px;
+    color: var(--text-secondary);
+    font-weight: 400;
+    margin-top: 2px;
+}
+
+.nav-links {
+    list-style: none;
+    padding: 12px 8px;
+    flex: 1;
+}
+
+.nav-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 14px;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    color: var(--text-secondary);
+    font-size: 13px;
+    font-weight: 500;
+    transition: var(--transition);
+    margin-bottom: 2px;
+}
+
+.nav-item:hover {
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--text-primary);
+}
+
+.nav-item.active {
+    background: rgba(255, 214, 10, 0.1);
+    color: var(--yellow);
+}
+
+.nav-item svg {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+}
+
+.sidebar-footer {
+    padding: 12px 8px;
+    border-top: 1px solid var(--border-color);
+}
+
+.sidebar-footer a {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 14px;
+    border-radius: var(--radius-sm);
+    color: var(--text-secondary);
+    font-size: 13px;
+    font-weight: 500;
+    transition: var(--transition);
+    text-decoration: none;
+}
+
+.sidebar-footer a:hover {
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--text-primary);
+}
+
+/* ============================================
+   Main Content
+   ============================================ */
+.main-content {
+    flex: 1;
+    margin-left: var(--sidebar-width);
+    min-height: 100vh;
+}
+
+/* ============================================
+   Header
+   ============================================ */
+.header {
+    height: var(--header-height);
+    padding: 0 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--border-color);
+    background: var(--bg-secondary);
+    position: sticky;
+    top: 0;
+    z-index: 50;
+}
+
+.header-left {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+}
+
+.page-title {
+    font-size: 20px;
+    font-weight: 700;
+}
+
+.date-display {
+    font-size: 13px;
+    color: var(--text-secondary);
+}
+
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.level-badge {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    background: var(--yellow-dim);
+    border: 1px solid rgba(255, 214, 10, 0.2);
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--yellow);
+}
+
+.level-badge svg {
+    width: 14px;
+    height: 14px;
+}
+
+.avatar {
+    width: 34px;
+    height: 34px;
+    background: linear-gradient(135deg, var(--yellow), var(--orange));
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    color: #0a0a0f;
+}
+
+/* ============================================
+   Sections
+   ============================================ */
+.section {
+    padding: 28px 32px;
+}
+
+.section.hidden {
+    display: none;
+}
+
+/* ============================================
+   Score Cards
+   ============================================ */
+.score-cards {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.score-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    padding: 24px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    transition: var(--transition);
+}
+
+.score-card:hover {
+    border-color: var(--border-hover);
+    background: var(--bg-card-hover);
+}
+
+.score-ring {
+    position: relative;
+    width: 80px;
+    height: 80px;
+    flex-shrink: 0;
+}
+
+.score-ring svg {
+    width: 80px;
+    height: 80px;
+    transform: rotate(-90deg);
+}
+
+.score-value {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+}
+
+.score-number {
+    font-size: 22px;
+    font-weight: 800;
+    line-height: 1;
+}
+
+.score-unit {
+    font-size: 11px;
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+
+.score-info h3 {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 4px;
+}
+
+.score-label {
+    font-size: 12px;
+    color: var(--text-tertiary);
+}
+
+.work-card .score-number { color: var(--blue); }
+.financial-card .score-number { color: var(--green); }
+.mental-card .score-number { color: var(--purple); }
+.time-card .score-number { color: var(--cyan); }
+
+/* ============================================
+   Panels
+   ============================================ */
+.panel-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+    margin-bottom: 16px;
+}
+
+.panel {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    padding: 24px;
+    margin-bottom: 16px;
+}
+
+.panel-grid .panel {
+    margin-bottom: 0;
+}
+
+.panel-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.panel-header h3 {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.panel-badge {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 8px;
+    background: rgba(255, 255, 255, 0.06);
+    border-radius: 4px;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+/* ============================================
+   Freedom Hero
+   ============================================ */
+.freedom-hero {
+    display: flex;
+    align-items: center;
+    gap: 32px;
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    padding: 32px 40px;
+    margin-bottom: 24px;
+}
+
+.freedom-hero-ring {
+    position: relative;
+    width: 160px;
+    height: 160px;
+    flex-shrink: 0;
+}
+
+.freedom-hero-ring svg {
+    width: 160px;
+    height: 160px;
+    transform: rotate(-90deg);
+}
+
+.freedom-hero-value {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.freedom-hero-number {
+    font-size: 36px;
+    font-weight: 800;
+    color: #ffd60a;
+    line-height: 1;
+}
+
+.freedom-hero-unit {
+    font-size: 14px;
+    color: rgba(255, 214, 10, 0.6);
+    font-weight: 600;
+}
+
+.freedom-hero-label {
+    font-size: 10px;
+    color: var(--text-tertiary);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-weight: 600;
+    margin-top: 4px;
+}
+
+.freedom-hero-info h2 {
+    font-size: 24px;
+    font-weight: 800;
+    color: #ffd60a;
+    margin-bottom: 8px;
+}
+
+.freedom-hero-info p {
+    font-size: 14px;
+    color: var(--text-secondary);
+    line-height: 1.5;
+    max-width: 420px;
+}
+
+/* ============================================
+   Freedom Inputs
+   ============================================ */
+.freedom-inputs {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.freedom-input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.freedom-input-group label {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-secondary);
+}
+
+.input-hint {
+    font-weight: 400;
+    color: var(--text-tertiary);
+    font-size: 10px;
+}
+
+.input-with-prefix,
+.input-with-suffix {
+    display: flex;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    transition: var(--transition);
+}
+
+.input-with-prefix:focus-within,
+.input-with-suffix:focus-within {
+    border-color: var(--yellow);
+    box-shadow: 0 0 0 3px rgba(255, 214, 10, 0.1);
+}
+
+.input-prefix,
+.input-suffix {
+    padding: 0 10px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-tertiary);
+    flex-shrink: 0;
+}
+
+.input-with-prefix input,
+.input-with-suffix input {
+    flex: 1;
+    padding: 9px 12px;
+    background: transparent;
+    border: none;
+    color: var(--text-primary);
+    font-size: 14px;
+    font-family: inherit;
+    font-weight: 600;
+    outline: none;
+    min-width: 0;
+}
+
+.input-with-prefix input { padding-left: 0; }
+.input-with-suffix input { padding-right: 0; text-align: right; }
+
+.input-with-prefix input::placeholder,
+.input-with-suffix input::placeholder {
+    color: var(--text-muted);
+    font-weight: 400;
+}
+
+/* Remove number input spinners */
+.freedom-inputs input[type="number"]::-webkit-outer-spin-button,
+.freedom-inputs input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+.freedom-inputs input[type="number"] {
+    -moz-appearance: textfield;
+}
+
+.freedom-save-btn {
+    margin-top: 6px;
+    width: 100%;
+}
+
+/* ============================================
+   Freedom Summary Bars
+   ============================================ */
+.freedom-summary {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    margin-bottom: 24px;
+}
+
+.freedom-bar-item {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.freedom-bar-top {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.freedom-bar-icon {
+    font-size: 16px;
+    width: 20px;
+    text-align: center;
+    flex-shrink: 0;
+}
+
+.freedom-bar-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    flex: 1;
+}
+
+.freedom-bar-value {
+    font-size: 15px;
+    font-weight: 800;
+    color: var(--text-primary);
+    min-width: 52px;
+    text-align: right;
+}
+
+.freedom-bar-track {
+    height: 8px;
+    background: rgba(255, 255, 255, 0.06);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.freedom-bar-track-gold {
+    height: 10px;
+    background: rgba(255, 214, 10, 0.08);
+}
+
+.freedom-bar-fill {
+    height: 100%;
+    border-radius: 4px;
+    transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.work-fill { background: linear-gradient(90deg, #4a9eff, #7ab8ff); }
+.financial-fill { background: linear-gradient(90deg, #1db954, #4cd97b); }
+.mental-fill { background: linear-gradient(90deg, #bf5af2, #d48dff); }
+.time-fill { background: linear-gradient(90deg, #64d2ff, #a0e4ff); }
+.modern-fill { background: linear-gradient(90deg, #ffd60a, #ffe066); }
+
+.freedom-bar-divider {
+    height: 1px;
+    background: var(--border-color);
+    margin: 4px 0;
+}
+
+.freedom-bar-total .freedom-bar-name {
+    color: #ffd60a;
+    font-weight: 700;
+    font-size: 14px;
+}
+
+.freedom-bar-total .freedom-bar-value {
+    color: #ffd60a;
+    font-size: 18px;
+}
+
+/* ============================================
+   Freedom Scale
+   ============================================ */
+.freedom-scale {
+    padding-top: 20px;
+    border-top: 1px solid var(--border-color);
+}
+
+.freedom-scale h4 {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 12px;
+}
+
+.freedom-scale-items {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.scale-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 3px 0;
+}
+
+.scale-pct {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--text-tertiary);
+    width: 36px;
+    text-align: right;
+    flex-shrink: 0;
+}
+
+.scale-name {
+    font-size: 11px;
+    color: var(--text-tertiary);
+    font-weight: 500;
+}
+
+.scale-item.scale-active {
+    background: rgba(255, 214, 10, 0.08);
+    border-radius: 4px;
+    padding: 3px 6px;
+    margin: 0 -6px;
+}
+
+.scale-item.scale-active .scale-pct,
+.scale-item.scale-active .scale-name {
+    color: #ffd60a;
+    font-weight: 700;
+}
+
+/* ============================================
+   Charts
+   ============================================ */
+.chart-container {
+    position: relative;
+    height: 200px;
+}
+
+.freedom-chart-container {
+    height: 280px;
+}
+
+/* ============================================
+   Metrics Row
+   ============================================ */
+.metrics-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+}
+
+.metric-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    padding: 16px;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: var(--radius);
+    border: 1px solid var(--border-color);
+}
+
+.metric-label {
+    font-size: 11px;
+    color: var(--text-tertiary);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-weight: 500;
+}
+
+.metric-value {
+    font-size: 20px;
+    font-weight: 700;
+}
+
+/* ============================================
+   History Table
+   ============================================ */
+.freedom-history-table-wrapper {
+    overflow-x: auto;
+}
+
+.freedom-history-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+}
+
+.freedom-history-table thead th {
+    text-align: left;
+    padding: 10px 14px;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--text-tertiary);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border-bottom: 1px solid var(--border-color);
+    white-space: nowrap;
+}
+
+.freedom-history-table tbody td {
+    padding: 12px 14px;
+    color: var(--text-secondary);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+    white-space: nowrap;
+}
+
+.freedom-history-table tbody tr:hover td {
+    background: rgba(255, 255, 255, 0.02);
+}
+
+.freedom-history-table .empty-row td {
+    text-align: center;
+    color: var(--text-muted);
+    padding: 32px 14px;
+}
+
+.freedom-history-table .modern-freedom-cell {
+    color: #ffd60a;
+    font-weight: 700;
+}
+
+.history-delete-btn {
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 4px;
+    font-size: 14px;
+    transition: var(--transition);
+}
+
+.history-delete-btn:hover {
+    color: var(--red);
+    background: var(--red-dim);
+}
+
+/* ============================================
+   Breakdown Panel
+   ============================================ */
+.breakdown-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+}
+
+.breakdown-card {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 20px;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: var(--radius);
+    border: 1px solid var(--border-color);
+}
+
+.breakdown-card h4 {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.breakdown-stat {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.breakdown-label {
+    font-size: 12px;
+    color: var(--text-tertiary);
+}
+
+.breakdown-value {
+    font-size: 14px;
+    font-weight: 700;
+}
+
+/* ============================================
+   Buttons
+   ============================================ */
+.btn {
+    padding: 10px 20px;
+    border-radius: var(--radius-sm);
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    transition: var(--transition);
+    font-family: inherit;
+}
+
+.btn-primary {
+    background: var(--yellow);
+    color: #0a0a0f;
+}
+
+.btn-primary:hover {
+    background: #ffe033;
+    transform: translateY(-1px);
+}
+
+.btn-secondary {
+    background: rgba(255, 255, 255, 0.06);
+    color: var(--text-secondary);
+    border: 1px solid var(--border-color);
+}
+
+.btn-secondary:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--text-primary);
+}
+
+.btn-small {
+    padding: 6px 12px;
+    font-size: 11px;
+    background: rgba(255, 255, 255, 0.06);
+    color: var(--text-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    font-family: inherit;
+    transition: var(--transition);
+}
+
+.btn-small:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--text-primary);
+}
+
+/* ============================================
+   Settings Modal
+   ============================================ */
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 200;
+}
+
+.modal-overlay.hidden {
+    display: none;
+}
+
+.modal {
+    background: var(--bg-elevated);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    width: 100%;
+    max-width: 480px;
+    overflow: hidden;
+}
+
+.modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 24px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.modal-header h3 {
+    font-size: 16px;
+    font-weight: 700;
+}
+
+.modal-close {
+    width: 28px;
+    height: 28px;
+    border: none;
+    background: rgba(255, 255, 255, 0.06);
+    color: var(--text-secondary);
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: var(--transition);
+}
+
+.modal-close:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--text-primary);
+}
+
+.modal-body {
+    padding: 24px;
+}
+
+.modal-footer {
+    padding: 16px 24px;
+    border-top: 1px solid var(--border-color);
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+}
+
+.form-group {
+    margin-bottom: 16px;
+}
+
+.form-group label {
+    display: block;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 6px;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 10px 14px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    color: var(--text-primary);
+    font-size: 14px;
+    font-family: inherit;
+    outline: none;
+    transition: var(--transition);
+}
+
+.form-group input:focus {
+    border-color: var(--yellow);
+    box-shadow: 0 0 0 3px rgba(255, 214, 10, 0.1);
+}
+
+.form-group input::placeholder {
+    color: var(--text-muted);
+}
+
+/* ============================================
+   Empty state
+   ============================================ */
+.empty-state {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 32px;
+    color: var(--text-muted);
+    font-size: 13px;
+}
+
+/* ============================================
+   Toast
+   ============================================ */
+.toast {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    background: var(--yellow);
+    color: #0a0a0f;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    z-index: 300;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    animation: toastIn 0.3s ease;
+}
+
+@keyframes toastIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* ============================================
+   Responsive
+   ============================================ */
+@media (max-width: 1200px) {
+    .score-cards {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    .breakdown-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 900px) {
+    .sidebar {
+        width: 64px;
+    }
+    .brand-text,
+    .nav-item span,
+    .sidebar-footer span {
+        display: none;
+    }
+    .sidebar-brand {
+        justify-content: center;
+        padding: 16px;
+    }
+    .nav-item {
+        justify-content: center;
+        padding: 12px;
+    }
+    .sidebar-footer a {
+        justify-content: center;
+        padding: 12px;
+    }
+    .main-content {
+        margin-left: 64px;
+    }
+    .panel-grid {
+        grid-template-columns: 1fr;
+    }
+    .metrics-row {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 600px) {
+    .score-cards {
+        grid-template-columns: 1fr;
+    }
+    .header {
+        padding: 0 16px;
+    }
+    .section {
+        padding: 20px 16px;
+    }
+    .freedom-hero {
+        flex-direction: column;
+        text-align: center;
+        padding: 24px;
+    }
+    .freedom-hero-info p {
+        max-width: none;
+    }
+}
