@@ -1,41 +1,43 @@
 /* ============================================
    Freedom Dashboard
-   Whoop-inspired dark aesthetic
+   Wealth-inspired dark aesthetic
    ============================================ */
 
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@300;400;500&family=Instrument+Serif:ital@0;1&display=swap');
+
 :root {
-    --bg-primary: #0a0a0f;
-    --bg-secondary: #111118;
-    --bg-card: #16161f;
-    --bg-card-hover: #1c1c28;
-    --bg-elevated: #1e1e2a;
-    --border-color: rgba(255, 255, 255, 0.06);
-    --border-hover: rgba(255, 255, 255, 0.12);
+    --bg-primary: #05050a;
+    --bg-secondary: #0a0a12;
+    --bg-card: #0a0a12;
+    --bg-card-hover: #0f0f18;
+    --bg-elevated: #0f0f18;
+    --border-color: #18182a;
+    --border-hover: #22223a;
 
-    --text-primary: #ffffff;
-    --text-secondary: rgba(255, 255, 255, 0.6);
-    --text-tertiary: rgba(255, 255, 255, 0.35);
-    --text-muted: rgba(255, 255, 255, 0.2);
+    --text-primary: #ededf8;
+    --text-secondary: #c8c8e0;
+    --text-tertiary: #42425a;
+    --text-muted: #42425a;
 
-    --green: #1db954;
-    --green-dim: rgba(29, 185, 84, 0.15);
-    --blue: #4a9eff;
-    --blue-dim: rgba(74, 158, 255, 0.15);
+    --green: #00e5a0;
+    --green-dim: #00e5a018;
+    --blue: #3d8aff;
+    --blue-dim: rgba(61, 138, 255, 0.15);
     --purple: #bf5af2;
     --purple-dim: rgba(191, 90, 242, 0.15);
-    --orange: #ff6b35;
-    --orange-dim: rgba(255, 107, 53, 0.15);
-    --red: #ff453a;
-    --red-dim: rgba(255, 69, 58, 0.15);
-    --yellow: #ffd60a;
-    --yellow-dim: rgba(255, 214, 10, 0.15);
+    --orange: #ff7a3d;
+    --orange-dim: rgba(255, 122, 61, 0.15);
+    --red: #ff3d5a;
+    --red-dim: rgba(255, 61, 90, 0.15);
+    --yellow: #f0c040;
+    --yellow-dim: rgba(240, 192, 64, 0.15);
     --cyan: #64d2ff;
 
     --sidebar-width: 240px;
     --header-height: 64px;
-    --radius: 12px;
-    --radius-sm: 8px;
-    --radius-lg: 16px;
+    --radius: 3px;
+    --radius-sm: 3px;
+    --radius-lg: 3px;
     --transition: all 0.2s ease;
 }
 
@@ -46,12 +48,32 @@
 }
 
 body {
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-family: 'DM Mono', monospace;
     background: var(--bg-primary);
     color: var(--text-primary);
     overflow-x: hidden;
     -webkit-font-smoothing: antialiased;
+    font-size: 13px;
+    line-height: 1.5;
 }
+
+/* Atmosphere */
+body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+        radial-gradient(ellipse 100% 50% at 80% -10%, #00e5a009 0%, transparent 55%),
+        radial-gradient(ellipse 70% 40% at -10% 80%, #3d8aff07 0%, transparent 55%),
+        radial-gradient(ellipse 60% 30% at 50% 110%, #ff3d5a06 0%, transparent 60%);
+    pointer-events: none;
+    z-index: 0;
+}
+
+/* Font utility classes */
+.font-bebas { font-family: 'Bebas Neue', sans-serif; }
+.font-mono { font-family: 'DM Mono', monospace; }
+.font-serif { font-family: 'Instrument Serif', serif; }
 
 /* Scrollbar */
 ::-webkit-scrollbar { width: 6px; }
@@ -94,7 +116,7 @@ body {
 .brand-icon {
     width: 36px;
     height: 36px;
-    background: linear-gradient(135deg, var(--yellow), #e6c200);
+    background: linear-gradient(135deg, var(--yellow), #c99a00);
     border-radius: var(--radius-sm);
     display: flex;
     align-items: center;
@@ -114,9 +136,10 @@ body {
 }
 
 .brand-name {
-    font-size: 13px;
-    font-weight: 700;
-    letter-spacing: 0.02em;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 16px;
+    font-weight: 400;
+    letter-spacing: 0.08em;
     color: var(--text-primary);
     line-height: 1.2;
 }
@@ -154,7 +177,7 @@ body {
 }
 
 .nav-item.active {
-    background: rgba(255, 214, 10, 0.1);
+    background: rgba(240, 192, 64, 0.1);
     color: var(--yellow);
 }
 
@@ -219,13 +242,17 @@ body {
 }
 
 .page-title {
-    font-size: 20px;
-    font-weight: 700;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 26px;
+    font-weight: 400;
+    letter-spacing: 0.05em;
 }
 
 .date-display {
-    font-size: 13px;
-    color: var(--text-secondary);
+    font-size: 9px;
+    color: var(--text-tertiary);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
 }
 
 .header-right {
@@ -238,12 +265,13 @@ body {
     display: flex;
     align-items: center;
     gap: 6px;
-    padding: 6px 12px;
-    background: var(--yellow-dim);
-    border: 1px solid rgba(255, 214, 10, 0.2);
-    border-radius: 20px;
-    font-size: 12px;
-    font-weight: 600;
+    padding: 3px 8px;
+    background: rgba(240, 192, 64, 0.1);
+    border: 1px solid rgba(240, 192, 64, 0.25);
+    border-radius: 2px;
+    font-size: 8px;
+    font-weight: 400;
+    letter-spacing: 0.15em;
     color: var(--yellow);
 }
 
@@ -325,8 +353,9 @@ body {
 }
 
 .score-number {
-    font-size: 22px;
-    font-weight: 800;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 28px;
+    font-weight: 400;
     line-height: 1;
 }
 
@@ -337,11 +366,11 @@ body {
 }
 
 .score-info h3 {
-    font-size: 13px;
-    font-weight: 600;
-    color: var(--text-secondary);
+    font-size: 8px;
+    font-weight: 400;
+    color: var(--text-tertiary);
     text-transform: uppercase;
-    letter-spacing: 0.05em;
+    letter-spacing: 0.3em;
     margin-bottom: 4px;
 }
 
@@ -385,20 +414,32 @@ body {
 }
 
 .panel-header h3 {
-    font-size: 14px;
-    font-weight: 600;
-    color: var(--text-primary);
+    font-size: 8px;
+    font-weight: 400;
+    letter-spacing: 0.35em;
+    color: var(--green);
+    text-transform: uppercase;
+}
+.panel-header h3::after {
+    content: '';
+    display: inline-block;
+    width: 24px;
+    height: 1px;
+    background: var(--border-hover);
+    vertical-align: middle;
+    margin-left: 8px;
 }
 
 .panel-badge {
-    font-size: 11px;
-    font-weight: 600;
+    font-size: 8px;
+    font-weight: 400;
     padding: 3px 8px;
-    background: rgba(255, 255, 255, 0.06);
-    border-radius: 4px;
-    color: var(--text-secondary);
+    background: #00e5a018;
+    border: 1px solid #00e5a040;
+    border-radius: 2px;
+    color: var(--green);
     text-transform: uppercase;
-    letter-spacing: 0.05em;
+    letter-spacing: 0.15em;
 }
 
 /* ============================================
@@ -440,16 +481,18 @@ body {
 }
 
 .freedom-hero-number {
-    font-size: 36px;
-    font-weight: 800;
-    color: #ffd60a;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 44px;
+    font-weight: 400;
+    color: #f0c040;
     line-height: 1;
 }
 
 .freedom-hero-unit {
-    font-size: 14px;
-    color: rgba(255, 214, 10, 0.6);
-    font-weight: 600;
+    font-size: 10px;
+    color: rgba(240, 192, 64, 0.6);
+    font-weight: 400;
+    letter-spacing: 0.1em;
 }
 
 .freedom-hero-label {
@@ -462,16 +505,20 @@ body {
 }
 
 .freedom-hero-info h2 {
-    font-size: 24px;
-    font-weight: 800;
-    color: #ffd60a;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 32px;
+    font-weight: 400;
+    letter-spacing: 0.05em;
+    color: #f0c040;
     margin-bottom: 8px;
 }
 
 .freedom-hero-info p {
-    font-size: 14px;
+    font-family: 'Instrument Serif', serif;
+    font-size: 13px;
+    font-style: italic;
     color: var(--text-secondary);
-    line-height: 1.5;
+    line-height: 1.6;
     max-width: 420px;
 }
 
@@ -515,7 +562,7 @@ body {
 .input-with-prefix:focus-within,
 .input-with-suffix:focus-within {
     border-color: var(--yellow);
-    box-shadow: 0 0 0 3px rgba(255, 214, 10, 0.1);
+    box-shadow: 0 0 0 3px rgba(240, 192, 64, 0.1);
 }
 
 .input-prefix,
@@ -595,15 +642,18 @@ body {
 }
 
 .freedom-bar-name {
-    font-size: 13px;
-    font-weight: 600;
-    color: var(--text-secondary);
+    font-size: 9px;
+    font-weight: 400;
+    color: var(--text-tertiary);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
     flex: 1;
 }
 
 .freedom-bar-value {
-    font-size: 15px;
-    font-weight: 800;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 20px;
+    font-weight: 400;
     color: var(--text-primary);
     min-width: 52px;
     text-align: right;
@@ -618,7 +668,7 @@ body {
 
 .freedom-bar-track-gold {
     height: 10px;
-    background: rgba(255, 214, 10, 0.08);
+    background: rgba(240, 192, 64, 0.08);
 }
 
 .freedom-bar-fill {
@@ -627,11 +677,11 @@ body {
     transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.work-fill { background: linear-gradient(90deg, #4a9eff, #7ab8ff); }
-.financial-fill { background: linear-gradient(90deg, #1db954, #4cd97b); }
-.mental-fill { background: linear-gradient(90deg, #bf5af2, #d48dff); }
-.time-fill { background: linear-gradient(90deg, #64d2ff, #a0e4ff); }
-.modern-fill { background: linear-gradient(90deg, #ffd60a, #ffe066); }
+.work-fill { background: #3d8aff; }
+.financial-fill { background: #00e5a0; }
+.mental-fill { background: #bf5af2; }
+.time-fill { background: #64d2ff; }
+.modern-fill { background: #f0c040; }
 
 .freedom-bar-divider {
     height: 1px;
@@ -640,14 +690,15 @@ body {
 }
 
 .freedom-bar-total .freedom-bar-name {
-    color: #ffd60a;
-    font-weight: 700;
-    font-size: 14px;
+    color: #f0c040;
+    font-weight: 400;
+    font-size: 10px;
+    letter-spacing: 0.15em;
 }
 
 .freedom-bar-total .freedom-bar-value {
-    color: #ffd60a;
-    font-size: 18px;
+    color: #f0c040;
+    font-size: 24px;
 }
 
 /* ============================================
@@ -659,11 +710,11 @@ body {
 }
 
 .freedom-scale h4 {
-    font-size: 12px;
-    font-weight: 700;
-    color: var(--text-secondary);
+    font-size: 8px;
+    font-weight: 400;
+    color: var(--text-tertiary);
     text-transform: uppercase;
-    letter-spacing: 0.06em;
+    letter-spacing: 0.25em;
     margin-bottom: 12px;
 }
 
@@ -696,16 +747,16 @@ body {
 }
 
 .scale-item.scale-active {
-    background: rgba(255, 214, 10, 0.08);
-    border-radius: 4px;
+    background: rgba(240, 192, 64, 0.08);
+    border-radius: 2px;
     padding: 3px 6px;
     margin: 0 -6px;
 }
 
 .scale-item.scale-active .scale-pct,
 .scale-item.scale-active .scale-name {
-    color: #ffd60a;
-    font-weight: 700;
+    color: #f0c040;
+    font-weight: 400;
 }
 
 /* ============================================
@@ -735,22 +786,23 @@ body {
     align-items: center;
     gap: 6px;
     padding: 16px;
-    background: rgba(255, 255, 255, 0.03);
+    background: var(--bg-secondary);
     border-radius: var(--radius);
     border: 1px solid var(--border-color);
 }
 
 .metric-label {
-    font-size: 11px;
+    font-size: 8px;
     color: var(--text-tertiary);
     text-transform: uppercase;
-    letter-spacing: 0.05em;
-    font-weight: 500;
+    letter-spacing: 0.2em;
+    font-weight: 400;
 }
 
 .metric-value {
-    font-size: 20px;
-    font-weight: 700;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 24px;
+    font-weight: 400;
 }
 
 /* ============================================
@@ -796,8 +848,8 @@ body {
 }
 
 .freedom-history-table .modern-freedom-cell {
-    color: #ffd60a;
-    font-weight: 700;
+    color: #f0c040;
+    font-weight: 400;
 }
 
 .history-delete-btn {
@@ -836,11 +888,11 @@ body {
 }
 
 .breakdown-card h4 {
-    font-size: 12px;
-    font-weight: 600;
-    color: var(--text-secondary);
+    font-size: 8px;
+    font-weight: 400;
+    color: var(--text-tertiary);
     text-transform: uppercase;
-    letter-spacing: 0.05em;
+    letter-spacing: 0.25em;
 }
 
 .breakdown-stat {
@@ -855,31 +907,34 @@ body {
 }
 
 .breakdown-value {
-    font-size: 14px;
-    font-weight: 700;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 18px;
+    font-weight: 400;
 }
 
 /* ============================================
    Buttons
    ============================================ */
 .btn {
-    padding: 10px 20px;
-    border-radius: var(--radius-sm);
-    font-size: 13px;
-    font-weight: 600;
+    padding: 8px 16px;
+    border-radius: 2px;
+    font-size: 9px;
+    font-weight: 400;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
     cursor: pointer;
     border: none;
     transition: var(--transition);
-    font-family: inherit;
+    font-family: 'DM Mono', monospace;
 }
 
 .btn-primary {
     background: var(--yellow);
-    color: #0a0a0f;
+    color: #05050a;
 }
 
 .btn-primary:hover {
-    background: #ffe033;
+    background: #f5cc55;
     transform: translateY(-1px);
 }
 
@@ -948,8 +1003,10 @@ body {
 }
 
 .modal-header h3 {
-    font-size: 16px;
-    font-weight: 700;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 22px;
+    font-weight: 400;
+    letter-spacing: 0.05em;
 }
 
 .modal-close {
@@ -1013,7 +1070,7 @@ body {
 
 .form-group input:focus {
     border-color: var(--yellow);
-    box-shadow: 0 0 0 3px rgba(255, 214, 10, 0.1);
+    box-shadow: 0 0 0 3px rgba(240, 192, 64, 0.1);
 }
 
 .form-group input::placeholder {
@@ -1040,13 +1097,14 @@ body {
     bottom: 24px;
     right: 24px;
     background: var(--yellow);
-    color: #0a0a0f;
-    padding: 12px 24px;
-    border-radius: 8px;
-    font-size: 13px;
-    font-weight: 600;
+    color: #05050a;
+    padding: 8px 16px;
+    border-radius: 2px;
+    font-size: 10px;
+    font-weight: 400;
+    letter-spacing: 0.1em;
     z-index: 300;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    box-shadow: 0 0 12px rgba(240, 192, 64, 0.3);
     animation: toastIn 0.3s ease;
 }
 
